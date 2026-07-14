@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EasyMedia · All-in-One Media Tools</title>
-    <!-- Font Awesome 6 (Free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- External libs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.0/dist/browser-image-compression.min.js"></script>
-    <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         * {
@@ -21,25 +18,28 @@
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
         body {
-            background: #f2f6fe;
-            padding: 20px;
+            background: #f0f4fa;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
         .app-wrapper {
-            max-width: 1400px;
+            max-width: 1300px;
             width: 100%;
+            margin: 0 auto;
+            padding: 20px 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Header */
+        /* ===== HEADER ===== */
         .navbar {
             background: #ffffffdd;
             backdrop-filter: blur(8px);
             border-radius: 60px;
             padding: 14px 30px;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
             box-shadow: 0 10px 30px rgba(0,20,50,0.08);
             display: flex;
             flex-wrap: wrap;
@@ -54,7 +54,6 @@
             font-size: 1.7rem;
             font-weight: 700;
             color: #0b1f3b;
-            letter-spacing: -0.5px;
         }
         .brand i {
             background: #1a5cff;
@@ -68,118 +67,179 @@
             font-size: 0.9rem;
             color: #3a5f8a;
         }
-        .menu {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px 8px;
+        .navbar .badge {
+            font-size: 0.85rem;
+            color: #4d6b85;
         }
-        .menu a {
-            text-decoration: none;
-            color: #1f3d6b;
-            font-weight: 500;
-            padding: 6px 14px;
-            border-radius: 40px;
-            background: transparent;
-            transition: 0.2s;
-            font-size: 0.82rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .menu a i {
-            font-size: 0.9rem;
-            color: #3b7bff;
-        }
-        .menu a:hover {
-            background: #e3edfe;
-            color: #0033aa;
-        }
-        .menu a.active {
-            background: #1a5cff;
-            color: white;
-        }
-        .menu a.active i {
-            color: white;
+        .navbar .badge i {
+            color: #1a5cff;
         }
 
-        /* Tools Grid - 3 columns for 6 tools */
+        /* ===== BACK BUTTON ===== */
+        .back-btn {
+            display: none;
+            background: #eaf1fc;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1a2f4a;
+            cursor: pointer;
+            transition: 0.2s;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+        .back-btn:hover {
+            background: #dce6f5;
+        }
+        .back-btn i {
+            color: #1a5cff;
+        }
+        .back-btn.visible {
+            display: inline-flex;
+        }
+
+        /* ===== HOME PAGE (Tool Grid) ===== */
+        #homePage {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        #homePage.hidden {
+            display: none;
+        }
+
+        .home-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .home-header h1 {
+            font-size: 2.2rem;
+            color: #0b1f3b;
+        }
+        .home-header h1 i {
+            color: #1a5cff;
+        }
+        .home-header p {
+            color: #4d6b85;
+            font-size: 1.05rem;
+            margin-top: 4px;
+        }
+
         .tools-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
         }
-        @media (max-width: 1100px) {
+        @media (max-width: 900px) {
             .tools-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
         }
-        @media (max-width: 700px) {
+        @media (max-width: 550px) {
             .tools-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        .tool-card {
+        .tool-card-home {
             background: #ffffff;
-            border-radius: 32px;
-            padding: 20px 20px 24px;
-            box-shadow: 0 12px 35px rgba(0,0,0,0.04);
+            border-radius: 28px;
+            padding: 28px 24px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.04);
             border: 1px solid #e9effa;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .tool-card-home:hover {
+            transform: translateY(-6px);
+            border-color: #1a5cff;
+            box-shadow: 0 16px 40px rgba(26,92,255,0.10);
+        }
+        .tool-card-home .icon {
+            font-size: 2.8rem;
+            color: #1a5cff;
+            background: #e5efff;
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            border-radius: 24px;
+            margin: 0 auto 14px;
+        }
+        .tool-card-home h3 {
+            font-size: 1.1rem;
+            color: #0b1f3b;
+            margin-bottom: 4px;
+        }
+        .tool-card-home p {
+            font-size: 0.85rem;
+            color: #6f8bb0;
+        }
+        .tool-card-home .arrow {
+            margin-top: 12px;
+            color: #1a5cff;
+            font-size: 0.9rem;
+            opacity: 0;
             transition: 0.2s;
-            display: none;
         }
-        .tool-card.active {
-            display: block;
-        }
-        .tool-card:hover {
-            border-color: #b9d0f0;
-            box-shadow: 0 20px 40px rgba(0,40,100,0.06);
+        .tool-card-home:hover .arrow {
+            opacity: 1;
         }
 
-        .tool-header {
+        /* ===== TOOL PAGES ===== */
+        .tool-page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tool-page.visible {
+            display: block;
+        }
+
+        .tool-page-header {
+            margin-bottom: 20px;
+        }
+        .tool-page-header h1 {
+            font-size: 1.8rem;
+            color: #0b1f3b;
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 14px;
-            border-bottom: 1px solid #ecf2fc;
-            padding-bottom: 10px;
         }
-        .tool-header i {
-            font-size: 1.8rem;
+        .tool-page-header h1 i {
             color: #1a5cff;
             background: #e5efff;
-            padding: 8px 10px;
-            border-radius: 18px;
-            width: 46px;
-            text-align: center;
+            padding: 12px;
+            border-radius: 20px;
         }
-        .tool-header h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #0f274a;
+        .tool-page-header p {
+            color: #4d6b85;
+            margin-top: 4px;
+            font-size: 1rem;
         }
-        .tool-header .short {
-            font-size: 0.7rem;
-            background: #dee9fd;
-            padding: 2px 12px;
-            border-radius: 30px;
-            color: #1f4c8a;
-            font-weight: 500;
-            margin-right: auto;
+
+        .tool-card {
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 24px 28px 28px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.04);
+            border: 1px solid #e9effa;
+            max-width: 900px;
         }
 
         .tool-body {
             background: #f7faff;
             border-radius: 24px;
-            padding: 16px 16px;
+            padding: 18px 20px;
         }
 
-        /* Common styles */
+        /* ===== COMMON STYLES ===== */
         .drop-zone, .upload-area {
             border: 2px dashed #b0c8e5;
             border-radius: 20px;
-            padding: 20px;
+            padding: 24px;
             text-align: center;
             background: #fafcff;
             cursor: pointer;
@@ -201,14 +261,15 @@
             color: #1a5cff;
             font-weight: 600;
             text-decoration: underline;
+            cursor: pointer;
         }
 
         .file-list {
             background: #edf3fc;
             border-radius: 16px;
-            padding: 8px 14px;
-            margin: 10px 0;
-            min-height: 38px;
+            padding: 10px 16px;
+            margin: 12px 0;
+            min-height: 44px;
             color: #1a3155;
             font-size: 0.9rem;
             word-break: break-word;
@@ -217,15 +278,15 @@
         .btn {
             background: white;
             border: none;
-            padding: 8px 20px;
+            padding: 10px 24px;
             border-radius: 60px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #1a2f4a;
             box-shadow: 0 4px 10px rgba(0,20,30,0.08);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: 0.2s;
             cursor: pointer;
             border: 1px solid #c6dbe8;
@@ -268,22 +329,22 @@
         .btn-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .status-box {
             background: #edf3fc;
             border-radius: 16px;
-            padding: 10px 14px;
-            margin-top: 10px;
-            min-height: 40px;
+            padding: 12px 16px;
+            margin-top: 12px;
+            min-height: 46px;
             color: #1a3155;
             font-size: 0.9rem;
         }
 
         .progress-container {
-            margin: 8px 0 4px;
+            margin: 10px 0 6px;
             background: #d7e2ec;
             border-radius: 40px;
             height: 6px;
@@ -301,24 +362,24 @@
         .preview-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 10px;
+            gap: 14px;
+            margin-top: 12px;
         }
         .preview-box {
             background: white;
             border-radius: 16px;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
             border: 1px solid #d3e2ed;
         }
         .preview-box h4 {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #1a2f4a;
             margin-bottom: 4px;
         }
         .preview-box img, .preview-box canvas {
             max-width: 100%;
-            max-height: 120px;
+            max-height: 130px;
             border-radius: 10px;
             background: #eef2f8;
         }
@@ -331,66 +392,99 @@
         .settings-row {
             background: #eaf1fc;
             border-radius: 16px;
-            padding: 10px 14px;
+            padding: 10px 16px;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
             margin: 10px 0;
         }
         .settings-row label {
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 0.8rem;
+            gap: 6px;
+            font-size: 0.85rem;
             color: #1a2f4a;
         }
         .settings-row input[type="range"] {
-            width: 80px;
+            width: 90px;
             accent-color: #1a5cff;
         }
         .settings-row input[type="number"] {
-            width: 50px;
+            width: 55px;
             border-radius: 30px;
             border: 1px solid #b9ceec;
-            padding: 3px 6px;
+            padding: 4px 8px;
             font-size: 0.8rem;
         }
         .settings-row input[type="color"] {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 6px;
             border: 1px solid #b9ceec;
             padding: 2px;
             background: white;
         }
+        .settings-row select {
+            border-radius: 30px;
+            border: 1px solid #b9ceec;
+            padding: 4px 12px;
+            background: white;
+            font-size: 0.8rem;
+        }
         .settings-row .val {
             background: white;
-            padding: 0 8px;
+            padding: 0 10px;
             border-radius: 20px;
             border: 1px solid #b9ceec;
             font-weight: 600;
             color: #1a5cff;
-            min-width: 30px;
+            min-width: 32px;
             text-align: center;
             font-size: 0.8rem;
         }
 
-        .footer {
-            margin-top: 36px;
-            text-align: center;
+        /* ===== FOOTER ===== */
+        .site-footer {
+            margin-top: 48px;
+            padding: 24px 0 16px;
+            border-top: 1px solid #d8e3f5;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .site-footer .copyright {
             color: #6f8bb0;
             font-size: 0.85rem;
-            border-top: 1px solid #d8e3f5;
-            padding-top: 20px;
+        }
+        .site-footer .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+        .site-footer .footer-links a {
+            color: #4d6b85;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .site-footer .footer-links a:hover {
+            color: #1a5cff;
+        }
+        .site-footer .footer-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6f8bb0;
+            font-size: 0.8rem;
+        }
+        .site-footer .footer-badge i {
+            color: #1a5cff;
         }
 
-        @media (max-width: 600px) {
-            .navbar { flex-direction: column; gap: 10px; padding: 14px; }
-            .menu { justify-content: center; }
-            .menu a { font-size: 0.7rem; padding: 4px 8px; }
-            .preview-grid { grid-template-columns: 1fr; }
-            .settings-row { flex-direction: column; align-items: stretch; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes spin {
@@ -398,8 +492,8 @@
         }
         .spinner {
             display: inline-block;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border: 3px solid #dce6f5;
             border-top: 3px solid #1a5cff;
             border-radius: 50%;
@@ -407,42 +501,116 @@
             vertical-align: middle;
             margin-right: 6px;
         }
+
+        @media (max-width: 700px) {
+            .navbar { flex-direction: column; gap: 8px; padding: 14px 20px; }
+            .tool-card { padding: 16px; }
+            .tool-body { padding: 12px; }
+            .preview-grid { grid-template-columns: 1fr; }
+            .settings-row { flex-direction: column; align-items: stretch; }
+            .site-footer { flex-direction: column; gap: 12px; text-align: center; }
+            .tool-card-home { padding: 20px 16px; }
+            .tool-card-home .icon { width: 56px; height: 56px; line-height: 56px; font-size: 2.2rem; }
+        }
     </style>
 </head>
 <body>
 
 <div class="app-wrapper">
 
-    <!-- Navbar -->
-    <nav class="navbar">
+    <!-- ===== HEADER ===== -->
+    <header class="navbar">
         <div class="brand">
             <i class="fas fa-wave-square"></i>
             EasyMedia
             <small>· toolkit</small>
         </div>
-        <div class="menu" id="mainMenu">
-            <a href="#" class="active" data-tool="tool1"><i class="fas fa-file-pdf"></i> Images to PDF</a>
-            <a href="#" data-tool="tool2"><i class="fas fa-file-word"></i> DOCX Compressor</a>
-            <a href="#" data-tool="tool3"><i class="fas fa-compress-arrows-alt"></i> Image Compressor</a>
-            <a href="#" data-tool="tool4"><i class="fas fa-microphone-alt"></i> Audio Processor</a>
-            <a href="#" data-tool="tool5"><i class="fas fa-magic"></i> Background Remover</a>
-            <a href="#" data-tool="tool6"><i class="fas fa-images"></i> PDF to Images</a>
+        <div class="badge">
+            <i class="fas fa-shield-alt"></i> 100% offline · no uploads
         </div>
-    </nav>
+    </header>
 
-    <!-- Tools Grid (6 tools) -->
-    <div class="tools-grid" id="toolsContainer">
+    <!-- ===== BACK BUTTON ===== -->
+    <button class="back-btn" id="backBtn">
+        <i class="fas fa-arrow-left"></i> Back to Tools
+    </button>
 
-        <!-- TOOL 1: Images to PDF -->
-        <div class="tool-card active" id="tool1">
-            <div class="tool-header">
-                <i class="fas fa-file-pdf"></i>
-                <h2>Images to PDF</h2>
-                <span class="short">PDF Maker</span>
+    <!-- ============================================================ -->
+    <!-- ===== HOME PAGE (only tool cards, no tools) ===== -->
+    <!-- ============================================================ -->
+    <div id="homePage">
+        <div class="home-header">
+            <h1><i class="fas fa-tools"></i> Select a Tool</h1>
+            <p>Choose from 6 powerful media tools — all run locally in your browser</p>
+        </div>
+
+        <div class="tools-grid">
+
+            <!-- Tool 1 -->
+            <div class="tool-card-home" data-tool="page1">
+                <div class="icon"><i class="fas fa-file-pdf"></i></div>
+                <h3>Images to PDF</h3>
+                <p>Convert multiple images into a single PDF</p>
+                <div class="arrow"><i class="fas fa-arrow-left"></i> Open Tool</div>
             </div>
+
+            <!-- Tool 2 -->
+            <div class="tool-card-home" data-tool="page2">
+                <div class="icon"><i class="fas fa-file-word"></i></div>
+                <h3>DOCX Compressor</h3>
+                <p>Reduce DOCX file size by compressing images</p>
+                <div class="arrow"><i class="fas fa-arrow-left"></i> Open Tool</div>
+            </div>
+
+            <!-- Tool 3 -->
+            <div class="tool-card-home" data-tool="page3">
+                <div class="icon"><i class="fas fa-compress-arrows-alt"></i></div>
+                <h3>Image Compressor</h3>
+                <p>Compress images with custom quality settings</p>
+                <div class="arrow"><i class="fas fa-arrow-left"></i> Open Tool</div>
+            </div>
+
+            <!-- Tool 4 -->
+            <div class="tool-card-home" data-tool="page4">
+                <div class="icon"><i class="fas fa-microphone-alt"></i></div>
+                <h3>Audio Processor</h3>
+                <p>Apply effects and process audio files</p>
+                <div class="arrow"><i class="fas fa-arrow-left"></i> Open Tool</div>
+            </div>
+
+            <!-- Tool 5 -->
+            <div class="tool-card-home" data-tool="page5">
+                <div class="icon"><i class="fas fa-magic"></i></div>
+                <h3>Background Remover</h3>
+                <p>Remove image background using edge detection</p>
+                <div class="arrow"><i class="fas fa-arrow-left"></i> Open Tool</div>
+            </div>
+
+            <!-- Tool 6 -->
+            <div class="tool-card-home" data-tool="page6">
+                <div class="icon"><i class="fas fa-images"></i></div>
+                <h3>PDF to Images</h3>
+                <p>Extract all pages from PDF as images + ZIP</p>
+                <div class="arrow"><i class="fas fa-arrow-left"></i> Open Tool</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ===== TOOL PAGES (hidden by default) ===== -->
+    <!-- ============================================================ -->
+
+    <!-- PAGE 1: Images to PDF -->
+    <div class="tool-page" id="page1">
+        <div class="tool-page-header">
+            <h1><i class="fas fa-file-pdf"></i> Images to PDF</h1>
+            <p>Convert multiple images into a single PDF document</p>
+        </div>
+        <div class="tool-card">
             <div class="tool-body">
                 <div class="drop-zone" id="dropZone1">
-                    <svg viewBox="0 0 24 24" width="36" height="36" stroke="#1a5cff" stroke-width="1.5" fill="none">
+                    <svg viewBox="0 0 24 24" width="40" height="40" stroke="#1a5cff" stroke-width="1.5" fill="none">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="17 8 12 3 7 8" />
                         <line x1="12" y1="3" x2="12" y2="15" />
@@ -459,17 +627,18 @@
                 <div class="status-box" id="status1">⏳ Waiting for images...</div>
             </div>
         </div>
+    </div>
 
-        <!-- TOOL 2: DOCX Compressor -->
-        <div class="tool-card" id="tool2">
-            <div class="tool-header">
-                <i class="fas fa-file-word"></i>
-                <h2>DOCX Compressor</h2>
-                <span class="short">Word Slim</span>
-            </div>
+    <!-- PAGE 2: DOCX Compressor -->
+    <div class="tool-page" id="page2">
+        <div class="tool-page-header">
+            <h1><i class="fas fa-file-word"></i> DOCX Compressor</h1>
+            <p>Reduce DOCX file size by compressing images inside</p>
+        </div>
+        <div class="tool-card">
             <div class="tool-body">
                 <div class="upload-area" id="uploadArea2">
-                    <i class="fas fa-cloud-upload-alt big-icon" style="font-size:2.2rem; color:#1a5cff;"></i>
+                    <i class="fas fa-cloud-upload-alt big-icon" style="font-size:2.5rem; color:#1a5cff;"></i>
                     <p>Drop or <span class="highlight" id="browse2">browse</span> DOCX</p>
                     <input type="file" id="fileInput2" accept=".docx" style="display:none;">
                     <div style="font-size:0.7rem; color:#6f8bb0;">.docx (Word 2007+)</div>
@@ -488,22 +657,23 @@
                 </div>
                 <div class="status-box" id="status2">📄 Waiting for DOCX file...</div>
                 <div class="preview-grid" id="resultBox2" style="display:none;">
-                    <div class="preview-box"><h4>Original</h4><div id="origSize2" style="font-size:1rem;">—</div></div>
-                    <div class="preview-box"><h4>Compressed</h4><div id="newSize2" style="font-size:1rem;">—</div></div>
+                    <div class="preview-box"><h4>Original</h4><div id="origSize2" style="font-size:1.1rem; font-weight:600;">—</div></div>
+                    <div class="preview-box"><h4>Compressed</h4><div id="newSize2" style="font-size:1.1rem; font-weight:600;">—</div></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- TOOL 3: Image Compressor -->
-        <div class="tool-card" id="tool3">
-            <div class="tool-header">
-                <i class="fas fa-compress-arrows-alt"></i>
-                <h2>Image Compressor</h2>
-                <span class="short">Compress</span>
-            </div>
+    <!-- PAGE 3: Image Compressor -->
+    <div class="tool-page" id="page3">
+        <div class="tool-page-header">
+            <h1><i class="fas fa-compress-arrows-alt"></i> Image Compressor</h1>
+            <p>Compress images with custom quality and size settings</p>
+        </div>
+        <div class="tool-card">
             <div class="tool-body">
                 <div class="upload-area" id="uploadArea3">
-                    <i class="fas fa-image big-icon" style="font-size:2.2rem; color:#1a5cff;"></i>
+                    <i class="fas fa-image big-icon" style="font-size:2.5rem; color:#1a5cff;"></i>
                     <p>Drop or <span class="highlight" id="browse3">browse</span> images</p>
                     <input type="file" id="fileInput3" accept="image/*" multiple style="display:none;">
                 </div>
@@ -526,44 +696,46 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- TOOL 4: Audio Processor -->
-        <div class="tool-card" id="tool4">
-            <div class="tool-header">
-                <i class="fas fa-microphone-alt"></i>
-                <h2>Audio Processor</h2>
-                <span class="short">Studio</span>
-            </div>
+    <!-- PAGE 4: Audio Processor -->
+    <div class="tool-page" id="page4">
+        <div class="tool-page-header">
+            <h1><i class="fas fa-microphone-alt"></i> Audio Processor</h1>
+            <p>Apply effects and process audio files locally</p>
+        </div>
+        <div class="tool-card">
             <div class="tool-body">
-                <div style="background:#eaf1fc; border-radius:60px; padding:8px 14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
-                    <input type="file" id="audioFile4" accept="audio/*" style="flex:1; background:#dce6f5; border:none; padding:5px 12px; border-radius:40px; color:#0f274a; font-size:0.85rem;">
+                <div style="background:#eaf1fc; border-radius:60px; padding:10px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                    <input type="file" id="audioFile4" accept="audio/*" style="flex:1; background:#dce6f5; border:none; padding:6px 14px; border-radius:40px; color:#0f274a; font-size:0.85rem;">
                     <span style="font-size:0.7rem; color:#3f5f86;">wav, mp3, m4a, flac</span>
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0;">
-                    <div style="background:#eaf1fc; border-radius:14px; padding:8px 12px; font-size:0.8rem;"><span style="font-weight:600;">HPF</span> 80Hz · 24dB/Oct</div>
-                    <div style="background:#eaf1fc; border-radius:14px; padding:8px 12px; font-size:0.8rem;"><span style="font-weight:600;">EQ</span> 4 bands</div>
-                    <div style="background:#eaf1fc; border-radius:14px; padding:8px 12px; font-size:0.8rem;"><span style="font-weight:600;">Comp</span> Ratio 3:1</div>
-                    <div style="background:#eaf1fc; border-radius:14px; padding:8px 12px; font-size:0.8rem;"><span style="font-weight:600;">DeEss + Lim</span> -1dB</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0;">
+                    <div style="background:#eaf1fc; border-radius:14px; padding:10px 14px; font-size:0.85rem;"><span style="font-weight:600;">HPF</span> 80Hz · 24dB/Oct</div>
+                    <div style="background:#eaf1fc; border-radius:14px; padding:10px 14px; font-size:0.85rem;"><span style="font-weight:600;">EQ</span> 4 bands</div>
+                    <div style="background:#eaf1fc; border-radius:14px; padding:10px 14px; font-size:0.85rem;"><span style="font-weight:600;">Comp</span> Ratio 3:1</div>
+                    <div style="background:#eaf1fc; border-radius:14px; padding:10px 14px; font-size:0.85rem;"><span style="font-weight:600;">DeEss + Lim</span> -1dB</div>
                 </div>
                 <div class="btn-group">
                     <button class="btn btn-primary" id="processBtn4"><i class="fas fa-play"></i> Process</button>
                     <button class="btn btn-success" id="downloadBtn4" disabled><i class="fas fa-download"></i> Download</button>
                 </div>
-                <audio id="audioPlayer4" controls style="width:100%; margin-top:8px; border-radius:60px; display:none;"></audio>
+                <audio id="audioPlayer4" controls style="width:100%; margin-top:10px; border-radius:60px; display:none;"></audio>
                 <div class="status-box" id="status4">📁 Select audio, then Process.</div>
             </div>
         </div>
+    </div>
 
-        <!-- TOOL 5: Background Remover -->
-        <div class="tool-card" id="tool5">
-            <div class="tool-header">
-                <i class="fas fa-magic"></i>
-                <h2>Background Remover</h2>
-                <span class="short">Smart BG</span>
-            </div>
+    <!-- PAGE 5: Background Remover -->
+    <div class="tool-page" id="page5">
+        <div class="tool-page-header">
+            <h1><i class="fas fa-magic"></i> Background Remover</h1>
+            <p>Remove image background using edge detection algorithm</p>
+        </div>
+        <div class="tool-card">
             <div class="tool-body">
                 <div class="upload-area" id="uploadArea5">
-                    <i class="fas fa-eraser big-icon" style="font-size:2.2rem; color:#1a5cff;"></i>
+                    <i class="fas fa-eraser big-icon" style="font-size:2.5rem; color:#1a5cff;"></i>
                     <p>Drop or <span class="highlight" id="browse5">browse</span> image</p>
                     <input type="file" id="fileInput5" accept="image/*" style="display:none;">
                     <div style="font-size:0.7rem; color:#6f8bb0;">JPG, PNG, BMP, WebP</div>
@@ -585,21 +757,22 @@
                 <div class="status-box" id="status5">🖼️ Waiting for image...</div>
                 <div class="preview-grid" id="previewGrid5" style="display:none;">
                     <div class="preview-box"><h4>Original</h4><img id="origImg5" src="#"><div class="info" id="origInfo5">—</div></div>
-                    <div class="preview-box"><h4>Without BG</h4><canvas id="resultCanvas5" style="max-width:100%; max-height:120px; border-radius:10px; background:#eef2f8;"></canvas><div class="info" id="resultInfo5">—</div></div>
+                    <div class="preview-box"><h4>Without BG</h4><canvas id="resultCanvas5" style="max-width:100%; max-height:130px; border-radius:10px; background:#eef2f8;"></canvas><div class="info" id="resultInfo5">—</div></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- TOOL 6: PDF to Images (UPDATED VERSION) -->
-        <div class="tool-card" id="tool6">
-            <div class="tool-header">
-                <i class="fas fa-images"></i>
-                <h2>PDF to Images</h2>
-                <span class="short">Extract</span>
-            </div>
+    <!-- PAGE 6: PDF to Images -->
+    <div class="tool-page" id="page6">
+        <div class="tool-page-header">
+            <h1><i class="fas fa-images"></i> PDF to Images</h1>
+            <p>Extract all pages from PDF as images + ZIP download</p>
+        </div>
+        <div class="tool-card">
             <div class="tool-body">
                 <div class="drop-zone" id="dropZone6">
-                    <svg viewBox="0 0 24 24" width="36" height="36" stroke="#1a5cff" stroke-width="1.5" fill="none">
+                    <svg viewBox="0 0 24 24" width="40" height="40" stroke="#1a5cff" stroke-width="1.5" fill="none">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="17 8 12 3 7 8" />
                         <line x1="12" y1="3" x2="12" y2="15" />
@@ -611,7 +784,7 @@
                 <div class="file-list" id="fileList6">📎 No PDF selected</div>
                 <div class="settings-row">
                     <label>Scale <input type="range" id="scaleSlider6" min="0.5" max="3" step="0.1" value="1.5"> <span class="val" id="scaleVal6">1.5x</span></label>
-                    <label>Format <select id="imageFormat6" style="border-radius:30px; border:1px solid #b9ceec; padding:3px 10px; background:white;">
+                    <label>Format <select id="imageFormat6">
                         <option value="png">PNG</option>
                         <option value="jpeg">JPEG</option>
                         <option value="webp">WebP</option>
@@ -627,45 +800,74 @@
                 <div class="status-box" id="status6">⏳ Waiting for PDF...</div>
             </div>
         </div>
-
     </div>
 
-    <footer class="footer">
-        <i class="fas fa-bolt" style="color:#1a5cff;"></i> All tools run locally in your browser · no uploads · EasyMedia
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer">
+        <div class="copyright">
+            <i class="fas fa-copyright" style="color:#6f8bb0;"></i> 2026 EasyMedia
+        </div>
+        <div class="footer-links">
+            <a href="#"><i class="fas fa-lock"></i> Privacy Policy</a>
+            <a href="#"><i class="fas fa-file-alt"></i> Terms</a>
+            <a href="#"><i class="fas fa-envelope"></i> Contact</a>
+        </div>
+        <div class="footer-badge">
+            <i class="fas fa-shield-alt"></i> 100% offline · no uploads
+        </div>
     </footer>
+
 </div>
 
 <script>
     (function() {
-        // ========== NAVIGATION ==========
-        const menuLinks = document.querySelectorAll('#mainMenu a');
-        const toolCards = {
-            tool1: document.getElementById('tool1'),
-            tool2: document.getElementById('tool2'),
-            tool3: document.getElementById('tool3'),
-            tool4: document.getElementById('tool4'),
-            tool5: document.getElementById('tool5'),
-            tool6: document.getElementById('tool6')
+        // =============================================================
+        // PAGE NAVIGATION: Home <-> Tool Pages
+        // =============================================================
+        const homePage = document.getElementById('homePage');
+        const backBtn = document.getElementById('backBtn');
+        const toolPages = {
+            page1: document.getElementById('page1'),
+            page2: document.getElementById('page2'),
+            page3: document.getElementById('page3'),
+            page4: document.getElementById('page4'),
+            page5: document.getElementById('page5'),
+            page6: document.getElementById('page6')
         };
 
-        menuLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
+        // Click on tool cards (home page)
+        document.querySelectorAll('.tool-card-home').forEach(card => {
+            card.addEventListener('click', function() {
                 const target = this.dataset.tool;
-                menuLinks.forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-                Object.keys(toolCards).forEach(key => {
-                    toolCards[key].classList.toggle('active', key === target);
-                });
+                showToolPage(target);
             });
         });
 
-        // Show first tool by default
-        Object.keys(toolCards).forEach((key, idx) => {
-            toolCards[key].classList.toggle('active', idx === 0);
+        // Back button
+        backBtn.addEventListener('click', function() {
+            showHomePage();
         });
 
-        // ========== TOOL 1: Images to PDF ==========
+        function showHomePage() {
+            homePage.classList.remove('hidden');
+            Object.values(toolPages).forEach(p => p.classList.remove('visible'));
+            backBtn.classList.remove('visible');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showToolPage(pageId) {
+            homePage.classList.add('hidden');
+            Object.values(toolPages).forEach(p => p.classList.remove('visible'));
+            if (toolPages[pageId]) {
+                toolPages[pageId].classList.add('visible');
+            }
+            backBtn.classList.add('visible');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // =============================================================
+        // TOOL 1: Images to PDF
+        // =============================================================
         (function tool1() {
             const dropZone = document.getElementById('dropZone1');
             const fileInput = document.getElementById('fileInput1');
@@ -752,7 +954,9 @@
             updateUI();
         })();
 
-        // ========== TOOL 2: DOCX Compressor ==========
+        // =============================================================
+        // TOOL 2: DOCX Compressor
+        // =============================================================
         (function tool2() {
             const uploadArea = document.getElementById('uploadArea2');
             const fileInput = document.getElementById('fileInput2');
@@ -896,7 +1100,9 @@
             resetTool();
         })();
 
-        // ========== TOOL 3: Image Compressor ==========
+        // =============================================================
+        // TOOL 3: Image Compressor
+        // =============================================================
         (function tool3() {
             const uploadArea = document.getElementById('uploadArea3');
             const fileInput = document.getElementById('fileInput3');
@@ -1023,7 +1229,9 @@
             updateUI();
         })();
 
-        // ========== TOOL 4: Audio Processor ==========
+        // =============================================================
+        // TOOL 4: Audio Processor
+        // =============================================================
         (function tool4() {
             const fileInput = document.getElementById('audioFile4');
             const processBtn = document.getElementById('processBtn4');
@@ -1112,7 +1320,9 @@
             status.innerHTML = '📁 Select audio, then Process.';
         })();
 
-        // ========== TOOL 5: Background Remover ==========
+        // =============================================================
+        // TOOL 5: Background Remover
+        // =============================================================
         (function tool5() {
             const uploadArea = document.getElementById('uploadArea5');
             const fileInput = document.getElementById('fileInput5');
@@ -1349,7 +1559,9 @@
             resetTool();
         })();
 
-        // ========== TOOL 6: PDF to Images (UPDATED VERSION) ==========
+        // =============================================================
+        // TOOL 6: PDF to Images
+        // =============================================================
         (function tool6() {
             const dropZone = document.getElementById('dropZone6');
             const fileInput = document.getElementById('fileInput6');
@@ -1367,7 +1579,6 @@
 
             scaleSlider.addEventListener('input', () => { scaleVal.textContent = scaleSlider.value + 'x'; });
 
-            // تنظیم worker PDF.js
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
             function formatSize(bytes) {
