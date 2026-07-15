@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOCX Compressor - Reduce Word File Size Free Online</title>
+    <meta name="description" content="Free online DOCX compressor. Reduce Word document file size by compressing images inside. No uploads, runs locally in your browser.">
+    <link rel="canonical" href="https://easymedia.example.com/tool2-docx-compressor.html">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
+        body { background:#f0f4fa; min-height:100vh; display:flex; flex-direction:column; }
+        .wrapper { max-width:1100px; width:100%; margin:0 auto; padding:20px 24px; flex:1; display:flex; flex-direction:column; }
+        .navbar { background:#ffffffdd; backdrop-filter:blur(8px); border-radius:60px; padding:14px 30px; margin-bottom:28px; box-shadow:0 10px 30px rgba(0,20,50,0.08); display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; border:1px solid rgba(255,255,255,0.6); }
+        .brand { display:flex; align-items:center; gap:10px; font-size:1.7rem; font-weight:700; color:#0b1f3b; text-decoration:none; }
+        .brand i { background:#1a5cff; color:white; padding:8px 10px; border-radius:40px; font-size:1.2rem; }
+        .brand small { font-weight:400; font-size:0.9rem; color:#3a5f8a; }
+        .badge { font-size:0.85rem; color:#4d6b85; }
+        .badge i { color:#1a5cff; }
+        .back-link { display:inline-flex; align-items:center; gap:8px; background:#eaf1fc; padding:8px 20px; border-radius:40px; text-decoration:none; color:#1a2f4a; font-weight:600; font-size:0.9rem; margin-bottom:20px; width:fit-content; transition:0.2s; }
+        .back-link:hover { background:#dce6f5; }
+        .back-link i { color:#1a5cff; }
+        .page-header { margin-bottom:20px; }
+        .page-header h1 { font-size:1.8rem; color:#0b1f3b; display:flex; align-items:center; gap:12px; }
+        .page-header h1 i { color:#1a5cff; background:#e5efff; padding:12px; border-radius:20px; }
+        .page-header p { color:#4d6b85; margin-top:4px; font-size:1rem; }
+        .tool-card { background:#ffffff; border-radius:32px; padding:24px 28px 28px; box-shadow:0 12px 35px rgba(0,0,0,0.04); border:1px solid #e9effa; max-width:900px; }
+        .tool-body { background:#f7faff; border-radius:24px; padding:18px 20px; }
+        .upload-area { border:2px dashed #b0c8e5; border-radius:20px; padding:24px; text-align:center; background:#fafcff; cursor:pointer; transition:0.25s; }
+        .upload-area:hover { border-color:#1a5cff; background:#f0f6ff; }
+        .upload-area .highlight { color:#1a5cff; font-weight:600; text-decoration:underline; cursor:pointer; }
+        .file-list { background:#edf3fc; border-radius:16px; padding:10px 16px; margin:12px 0; min-height:44px; color:#1a3155; font-size:0.9rem; word-break:break-word; }
+        .btn { background:white; border:none; padding:10px 24px; border-radius:60px; font-weight:600; font-size:0.9rem; color:#1a2f4a; box-shadow:0 4px 10px rgba(0,20,30,0.08); display:inline-flex; align-items:center; gap:8px; transition:0.2s; cursor:pointer; border:1px solid #c6dbe8; }
+        .btn-primary { background:#1a5cff; border-color:#1a5cff; color:white; box-shadow:0 8px 16px -6px #1a5cff80; }
+        .btn-primary i { color:white; }
+        .btn-primary:hover { background:#0047dd; transform:scale(1.01); }
+        .btn-success { background:#0f9d5e; border-color:#0f9d5e; color:white; }
+        .btn-success:hover { background:#0a7a48; transform:scale(1.01); }
+        .btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; box-shadow:none !important; }
+        .btn-outline { background:transparent; }
+        .btn-outline:hover { background:#eaf1f7; }
+        .btn-group { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+        .status-box { background:#edf3fc; border-radius:16px; padding:12px 16px; margin-top:12px; min-height:46px; color:#1a3155; font-size:0.9rem; }
+        .progress-container { margin:10px 0 6px; background:#d7e2ec; border-radius:40px; height:6px; overflow:hidden; display:none; }
+        .progress-bar { height:100%; width:0%; background:linear-gradient(90deg,#1a5cff,#5ba3c9); border-radius:40px; transition:width 0.3s; }
+        .preview-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px; }
+        .preview-box { background:white; border-radius:16px; padding:12px; text-align:center; border:1px solid #d3e2ed; }
+        .preview-box h4 { font-size:0.8rem; color:#1a2f4a; margin-bottom:4px; }
+        .preview-box div { font-size:1.1rem; font-weight:600; }
+        .settings-row { background:#eaf1fc; border-radius:16px; padding:10px 16px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:10px 0; }
+        .settings-row label { display:flex; align-items:center; gap:6px; font-size:0.85rem; color:#1a2f4a; }
+        .settings-row input[type="range"] { width:90px; accent-color:#1a5cff; }
+        .settings-row .val { background:white; padding:0 10px; border-radius:20px; border:1px solid #b9ceec; font-weight:600; color:#1a5cff; min-width:32px; text-align:center; font-size:0.8rem; }
+        .site-footer { margin-top:48px; padding:24px 0 16px; border-top:1px solid #d8e3f5; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; }
+        .site-footer .copyright { color:#6f8bb0; font-size:0.85rem; }
+        .site-footer .footer-links { display:flex; gap:20px; }
+        .site-footer .footer-links a { color:#4d6b85; text-decoration:none; font-size:0.85rem; transition:0.2s; }
+        .site-footer .footer-links a:hover { color:#1a5cff; }
+        .site-footer .footer-badge { display:flex; align-items:center; gap:6px; color:#6f8bb0; font-size:0.8rem; }
+        .site-footer .footer-badge i { color:#1a5cff; }
+        .spinner { display:inline-block; width:18px; height:18px; border:3px solid #dce6f5; border-top:3px solid #1a5cff; border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:6px; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        @media (max-width:700px){ .navbar{flex-direction:column;gap:8px;padding:14px 20px;} .tool-card{padding:16px;} .tool-body{padding:12px;} .preview-grid{grid-template-columns:1fr;} .settings-row{flex-direction:column;align-items:stretch;} .site-footer{flex-direction:column;gap:12px;text-align:center;} }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <header class="navbar">
+        <a href="index.html" class="brand"><i class="fas fa-wave-square"></i> EasyMedia <small>· free tools</small></a>
+        <div class="badge"><i class="fas fa-shield-alt"></i> 100% offline · no uploads</div>
+    </header>
+
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+
+    <div class="page-header">
+        <h1><i class="fas fa-file-word"></i> DOCX Compressor</h1>
+        <p>Reduce Word document file size by compressing images inside</p>
+    </div>
+
+    <div class="tool-card">
+        <div class="tool-body">
+            <div class="upload-area" id="uploadArea2">
+                <i class="fas fa-cloud-upload-alt" style="font-size:2.5rem; color:#1a5cff; display:block; margin:0 auto 4px;"></i>
+                <p>Drop or <span class="highlight" id="browse2">browse</span> DOCX</p>
+                <input type="file" id="fileInput2" accept=".docx" style="display:none;">
+                <div style="font-size:0.7rem; color:#6f8bb0;">.docx (Word 2007+)</div>
+            </div>
+            <div class="file-list" id="fileList2">📎 No file selected</div>
+            <div class="settings-row">
+                <label>Image Quality <input type="range" id="qualitySlider2" min="50" max="95" value="80"> <span class="val" id="qualityVal2">80%</span></label>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="compressBtn2" disabled><i class="fas fa-compress-alt"></i> Compress</button>
+                <button class="btn btn-success" id="downloadBtn2" disabled style="display:none;"><i class="fas fa-download"></i> Download</button>
+                <button class="btn btn-outline" id="clearBtn2"><i class="fas fa-trash-alt"></i> Clear</button>
+            </div>
+            <div class="progress-container" id="progressContainer2">
+                <div class="progress-bar" id="progressBar2"></div>
+            </div>
+            <div class="status-box" id="status2">📄 Waiting for DOCX file...</div>
+            <div class="preview-grid" id="resultBox2" style="display:none;">
+                <div class="preview-box"><h4>Original</h4><div id="origSize2">—</div></div>
+                <div class="preview-box"><h4>Compressed</h4><div id="newSize2">—</div></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="copyright"><i class="fas fa-copyright"></i> 2026 EasyMedia</div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="footer-badge"><i class="fas fa-shield-alt"></i> 100% offline</div>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        const uploadArea = document.getElementById('uploadArea2');
+        const fileInput = document.getElementById('fileInput2');
+        const fileList = document.getElementById('fileList2');
+        const compressBtn = document.getElementById('compressBtn2');
+        const downloadBtn = document.getElementById('downloadBtn2');
+        const clearBtn = document.getElementById('clearBtn2');
+        const progressContainer = document.getElementById('progressContainer2');
+        const progressBar = document.getElementById('progressBar2');
+        const status = document.getElementById('status2');
+        const qualitySlider = document.getElementById('qualitySlider2');
+        const qualityVal = document.getElementById('qualityVal2');
+        const resultBox = document.getElementById('resultBox2');
+        const origSize2 = document.getElementById('origSize2');
+        const newSize2 = document.getElementById('newSize2');
+
+        let selectedFile = null;
+        let compressedBlob = null;
+
+        qualitySlider.addEventListener('input', () => { qualityVal.textContent = qualitySlider.value+'%'; });
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+            return (bytes/1048576).toFixed(1) + ' MB';
+        }
+
+        function resetTool() {
+            selectedFile = null;
+            compressedBlob = null;
+            fileInput.value = '';
+            fileList.innerHTML = '📎 No file selected';
+            compressBtn.disabled = true;
+            downloadBtn.style.display = 'none';
+            downloadBtn.disabled = true;
+            resultBox.style.display = 'none';
+            progressContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+            status.innerHTML = '📄 Waiting for DOCX file...';
+        }
+
+        function handleFile(file) {
+            if (!file || !file.name.endsWith('.docx')) {
+                status.innerHTML = '⚠️ Please select a .docx file.';
+                return;
+            }
+            selectedFile = file;
+            fileList.innerHTML = `📄 ${file.name} (${formatSize(file.size)})`;
+            compressBtn.disabled = false;
+            downloadBtn.style.display = 'none';
+            resultBox.style.display = 'none';
+            compressedBlob = null;
+            status.innerHTML = `✅ ${file.name} ready for compression.`;
+        }
+
+        uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor='#1a5cff'; });
+        uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor='#b0c8e5'; });
+        uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.style.borderColor='#b0c8e5'; if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+        uploadArea.addEventListener('click', () => fileInput.click());
+        document.getElementById('browse2').addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+        fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); fileInput.value=''; });
+        clearBtn.addEventListener('click', resetTool);
+
+        compressBtn.addEventListener('click', async function() {
+            if (!selectedFile) return;
+            compressBtn.disabled = true;
+            clearBtn.disabled = true;
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '5%';
+            status.innerHTML = '⏳ Compressing...';
+
+            try {
+                const quality = parseInt(qualitySlider.value) / 100;
+                const arrayBuffer = await selectedFile.arrayBuffer();
+                const zip = new JSZip();
+                const zipData = await zip.loadAsync(arrayBuffer);
+                
+                const mediaFiles = Object.keys(zipData.files).filter(name => 
+                    name.startsWith('word/media/') && 
+                    /\.(png|jpe?g|gif|bmp|webp|svg|tiff?)$/i.test(name)
+                );
+
+                let processed = 0;
+                const total = mediaFiles.length || 1;
+
+                for (const filePath of mediaFiles) {
+                    const fileEntry = zipData.files[filePath];
+                    if (fileEntry.dir) continue;
+                    const imageData = await fileEntry.async('blob');
+                    const img = await createImageBitmap(imageData);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    const mime = imageData.type || 'image/jpeg';
+                    const compressed = await new Promise(res => canvas.toBlob(res, mime, quality));
+                    if (compressed && compressed.size < imageData.size) {
+                        zipData.file(filePath, compressed);
+                    }
+                    processed++;
+                    const pct = 5 + (processed / total) * 85;
+                    progressBar.style.width = Math.min(pct, 90) + '%';
+                }
+
+                const outputBlob = await zipData.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+                compressedBlob = outputBlob;
+                progressBar.style.width = '100%';
+                
+                const originalSize = selectedFile.size;
+                const newSize = outputBlob.size;
+                const saved = originalSize - newSize;
+                const percent = ((saved / originalSize) * 100).toFixed(1);
+
+                origSize2.textContent = formatSize(originalSize);
+                newSize2.textContent = formatSize(newSize);
+                resultBox.style.display = 'grid';
+                downloadBtn.style.display = 'inline-flex';
+                downloadBtn.disabled = false;
+                status.innerHTML = `✅ Compression complete! ${percent}% saved`;
+                setTimeout(() => { progressContainer.style.display = 'none'; }, 500);
+            } catch(e) {
+                status.innerHTML = '❌ Error: '+e.message;
+                progressContainer.style.display = 'none';
+            }
+            compressBtn.disabled = false;
+            clearBtn.disabled = false;
+        });
+
+        downloadBtn.addEventListener('click', function() {
+            if (!compressedBlob) return;
+            const link = document.createElement('a');
+            const name = selectedFile.name.replace(/\.docx$/i, '') + '_compressed.docx';
+            link.href = URL.createObjectURL(compressedBlob);
+            link.download = name;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        });
+
+        resetTool();
+    })();
+</script>
+</body>
+</html>
