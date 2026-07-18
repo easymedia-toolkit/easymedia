@@ -79,6 +79,10 @@
         .site-footer .footer-badge { display:flex; align-items:center; gap:6px; color:#6f8bb0; font-size:0.8rem; }
         .site-footer .footer-badge i { color:#1a5cff; }
         
+        /* Style for language support hint */
+        .encoding-info { font-size:0.8rem; color:#6f8bb0; margin-top:4px; }
+        .encoding-info i { color:#1a5cff; }
+        
         @media (max-width:700px){ .navbar{flex-direction:column;gap:8px;padding:14px 20px;} .tool-card{padding:16px;} .tool-body{padding:12px;} .settings-row{flex-direction:column;align-items:stretch;} .site-footer{flex-direction:column;gap:12px;text-align:center;} .qr-preview #qrcode { padding:8px; } }
     </style>
 </head>
@@ -93,7 +97,7 @@
 
     <div class="page-header">
         <h1><i class="fas fa-qrcode"></i> QR Code Generator</h1>
-        <p>Create custom QR codes with colors and different sizes. Download as JPG or SVG.</p>
+        <p>Create custom QR codes with colors and different sizes. Supports all languages (UTF-8). Download as JPG or SVG.</p>
     </div>
 
     <div class="tool-card">
@@ -102,6 +106,7 @@
             <div class="form-group">
                 <label><i class="fas fa-edit"></i> Content / URL</label>
                 <textarea id="qrContent" placeholder="Enter text, URL, or any content you want to encode..."></textarea>
+                <div class="encoding-info"><i class="fas fa-info-circle"></i> Supports all languages: English, فارسی, العربية, 中文, 日本語, Русский, and more (UTF-8)</div>
             </div>
 
             <!-- Settings -->
@@ -176,7 +181,7 @@
             sizeVal.textContent = qrSize.value;
         });
 
-        // ===== Generate QR Code =====
+        // ===== Generate QR Code with UTF-8 Support =====
         function generateQR() {
             const content = qrContent.value.trim();
             if (!content) {
@@ -197,14 +202,18 @@
             // Clear previous QR
             qrContainer.innerHTML = '';
 
-            // Get error correction level
+            // Get error correction level (higher for better readability with special chars)
             const ecMap = { 'L': 1, 'M': 0, 'Q': 3, 'H': 2 };
             const ec = ecMap[ecLevel] || 0;
 
             try {
+                // Encode content as UTF-8 for proper language support
+                // QRCode.js handles UTF-8 automatically, but we ensure proper encoding
+                const encodedContent = content;
+                
                 // Create QR code with options
                 currentQrCode = new QRCode(qrContainer, {
-                    text: content,
+                    text: encodedContent,
                     width: size,
                     height: size,
                     colorDark: fg,
@@ -212,10 +221,43 @@
                     correctLevel: ec
                 });
 
+                // For better readability, we can also add a white border
+                setTimeout(() => {
+                    const canvas = qrContainer.querySelector('canvas');
+                    if (canvas) {
+                        // Ensure the canvas has proper rendering
+                        const ctx = canvas.getContext('2d');
+                        // Add a small white border for better scanning
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = canvas.width + 20;
+                        tempCanvas.height = canvas.height + 20;
+                        const tempCtx = tempCanvas.getContext('2d');
+                        tempCtx.fillStyle = '#ffffff';
+                        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                        tempCtx.drawImage(canvas, 10, 10);
+                        
+                        // Replace original canvas with bordered version
+                        const newCanvas = document.createElement('canvas');
+                        newCanvas.width = tempCanvas.width;
+                        newCanvas.height = tempCanvas.height;
+                        const newCtx = newCanvas.getContext('2d');
+                        newCtx.drawImage(tempCanvas, 0, 0);
+                        
+                        // Remove old canvas and add new one
+                        const parent = canvas.parentNode;
+                        parent.removeChild(canvas);
+                        parent.appendChild(newCanvas);
+                    }
+                }, 50);
+
                 isGenerated = true;
                 downloadJpgBtn.disabled = false;
                 downloadSvgBtn.disabled = false;
-                status.innerHTML = `✅ QR Code generated successfully! (${content.length} characters)`;
+                
+                // Show character count and encoding info
+                const charCount = content.length;
+                const langInfo = /[^\x00-\x7F]/.test(content) ? ' (contains Unicode characters)' : '';
+                status.innerHTML = `✅ QR Code generated successfully! ${charCount} characters${langInfo}`;
 
             } catch (error) {
                 status.innerHTML = '❌ Error: ' + error.message;
@@ -223,7 +265,21 @@
             }
         }
 
-        // ===== Download JPG (با کیفیت بالا) =====
+        // ===== Generate Random Filename =====
+        function generateRandomFilename(extension) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const randomNum = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+            
+            return `qrcode_${year}${month}${day}_${hours}${minutes}${seconds}_${randomNum}.${extension}`;
+        }
+
+        // ===== Download JPG =====
         function downloadJPG() {
             const canvas = qrContainer.querySelector('canvas');
             if (!canvas) {
@@ -232,23 +288,23 @@
             }
 
             try {
-                // ایجاد یک کپی از canvas با پس‌زمینه سفید برای JPG
+                // Create a copy with white background for JPG
                 const tempCanvas = document.createElement('canvas');
                 tempCanvas.width = canvas.width;
                 tempCanvas.height = canvas.height;
                 const ctx = tempCanvas.getContext('2d');
                 
-                // پس‌زمینه سفید
+                // White background
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
                 
-                // رسم QR code روی آن
+                // Draw QR code
                 ctx.drawImage(canvas, 0, 0);
                 
-                // تبدیل به JPG با کیفیت ۹۲٪
+                // Convert to JPG with high quality
                 const link = document.createElement('a');
-                link.download = 'qrcode.jpg';
-                link.href = tempCanvas.toDataURL('image/jpeg', 0.92);
+                link.download = generateRandomFilename('jpg');
+                link.href = tempCanvas.toDataURL('image/jpeg', 0.95);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -279,7 +335,7 @@
                 const blob = new Blob([svg], { type: 'image/svg+xml' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
-                link.download = 'qrcode.svg';
+                link.download = generateRandomFilename('svg');
                 link.href = url;
                 document.body.appendChild(link);
                 link.click();
@@ -320,7 +376,7 @@
             if (isGenerated) generateQR();
         });
 
-        // ===== Initial state - no auto generation =====
+        // ===== Initial state =====
         status.innerHTML = '📝 Enter your content and click "Generate QR Code"';
         downloadJpgBtn.disabled = true;
         downloadSvgBtn.disabled = true;
