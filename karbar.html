@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>چت</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            margin: 0;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            padding: 24px 20px 30px;
+            transition: 0.3s;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .sub {
+            text-align: center;
+            color: #475569;
+            margin-bottom: 22px;
+            font-size: 0.95rem;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-weight: 500;
+            color: #0f172a;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            font-size: 1rem;
+            background: #f8fafc;
+            transition: 0.2s;
+            outline: none;
+            font-family: inherit;
+        }
+        input:focus {
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 8px;
+            font-family: inherit;
+        }
+        .btn:hover {
+            background: #2563eb;
+            transform: scale(0.98);
+        }
+        .btn-danger {
+            background: #ef4444;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .chat-box {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 12px 8px;
+            margin: 18px 0 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e9edf2;
+        }
+        .message {
+            padding: 10px 14px;
+            margin: 6px 8px;
+            border-radius: 20px;
+            max-width: 85%;
+            word-wrap: break-word;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #e9edf2;
+        }
+        .message.admin {
+            background: #dbeafe;
+            border-color: #93b5f0;
+            margin-right: auto;
+            border-bottom-right-radius: 6px;
+        }
+        .message.user {
+            background: #e5e7eb;
+            border-color: #cbd5e1;
+            margin-left: auto;
+            border-bottom-left-radius: 6px;
+        }
+        .msg-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #475569;
+            margin-top: 6px;
+            gap: 12px;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0 6px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            border-radius: 40px;
+        }
+        .chat-input-area .btn {
+            width: auto;
+            padding: 0 22px;
+            border-radius: 40px;
+            margin-top: 0;
+        }
+        .error-msg {
+            color: #b91c1c;
+            background: #fee2e2;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            margin: 6px 0;
+        }
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .header-bar h2 {
+            font-size: 1.3rem;
+        }
+        .footer-note {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-top: 14px;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 14px;
+        }
+        @media (max-width: 480px) {
+            .container { padding: 18px 12px; }
+            .chat-input-area { flex-wrap: wrap; }
+            .chat-input-area input { flex: 1 1 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- صفحه ورود -->
+    <div id="loginPage">
+        <h1>💬 چت</h1>
+        <p class="sub">نام خود را وارد کنید</p>
+        <div class="form-group">
+            <label>نام شما</label>
+            <input type="text" id="userNameInput" placeholder="نام خود را وارد کنید" maxlength="30" />
+        </div>
+        <button class="btn" id="enterBtn">ورود</button>
+        <div id="loginError" class="error-msg hidden"></div>
+        <div class="footer-note">🔒 پیام‌ها در مرورگر ذخیره می‌شوند</div>
+    </div>
+
+    <!-- صفحه چت -->
+    <div id="chatPage" class="hidden">
+        <div class="header-bar">
+            <h2>👤 <span id="userNameDisplay">کاربر</span></h2>
+            <button class="btn btn-danger" id="logoutBtn" style="width:auto; padding:6px 18px; font-size:0.8rem;">خروج</button>
+        </div>
+        <div class="chat-box" id="chatBox"></div>
+        <div class="chat-input-area">
+            <input type="text" id="messageInput" placeholder="پیام خود را بنویسید..." maxlength="500" />
+            <button class="btn" id="sendBtn">ارسال</button>
+        </div>
+        <div id="chatError" class="error-msg hidden"></div>
+        <div class="footer-note">✅ پیام‌های شما ذخیره می‌شود</div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const STORAGE_KEY = 'chat_data';
+        const USER_KEY = 'chat_user';
+
+        function loadMessages() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch { return []; }
+        }
+
+        function saveMessages(messages) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+        }
+
+        function addMessage(sender, text, isAdmin = false) {
+            const messages = loadMessages();
+            messages.push({
+                id: Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                sender: sender.trim(),
+                text: text.trim(),
+                timestamp: new Date().toLocaleString('fa-IR'),
+                isAdmin: !!isAdmin
+            });
+            saveMessages(messages);
+            return messages;
+        }
+
+        const loginPage = document.getElementById('loginPage');
+        const chatPage = document.getElementById('chatPage');
+        const userNameInput = document.getElementById('userNameInput');
+        const enterBtn = document.getElementById('enterBtn');
+        const loginError = document.getElementById('loginError');
+        const userNameDisplay = document.getElementById('userNameDisplay');
+        const chatBox = document.getElementById('chatBox');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const chatError = document.getElementById('chatError');
+
+        let currentUser = '';
+
+        function showError(element, msg) {
+            element.textContent = msg;
+            element.classList.remove('hidden');
+            setTimeout(() => {
+                element.classList.add('hidden');
+            }, 4000);
+        }
+
+        function renderMessages() {
+            const messages = loadMessages();
+            chatBox.innerHTML = '';
+            if (messages.length === 0) {
+                chatBox.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:20px;">هنوز پیامی وجود ندارد</div>';
+                return;
+            }
+            messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'message';
+                if (msg.isAdmin) {
+                    div.classList.add('admin');
+                } else {
+                    div.classList.add('user');
+                }
+                let senderDisplay = msg.isAdmin ? '🛡️ مدیر' : (msg.sender === currentUser ? 'شما' : msg.sender);
+                div.innerHTML = `
+                    <div><strong>${senderDisplay}</strong></div>
+                    <div>${escapeHtml(msg.text)}</div>
+                    <div class="msg-meta"><span>${msg.timestamp}</span></div>
+                `;
+                chatBox.appendChild(div);
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function checkSavedUser() {
+            const saved = localStorage.getItem(USER_KEY);
+            if (saved) {
+                userNameInput.value = saved;
+                currentUser = saved;
+                enterChat();
+            }
+        }
+
+        function enterChat() {
+            loginPage.classList.add('hidden');
+            chatPage.classList.remove('hidden');
+            userNameDisplay.textContent = currentUser;
+            renderMessages();
+            messageInput.value = '';
+        }
+
+        function handleLogin() {
+            const name = userNameInput.value.trim();
+            if (!name) {
+                showError(loginError, 'لطفاً نام خود را وارد کنید');
+                return;
+            }
+            if (name.length < 2) {
+                showError(loginError, 'نام باید حداقل ۲ حرف باشد');
+                return;
+            }
+            currentUser = name;
+            localStorage.setItem(USER_KEY, name);
+            enterChat();
+        }
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) {
+                showError(chatError, 'لطفاً پیام خود را بنویسید');
+                return;
+            }
+            addMessage(currentUser, text, false);
+            renderMessages();
+            messageInput.value = '';
+            chatError.classList.add('hidden');
+        }
+
+        function logout() {
+            if (confirm('آیا مطمئن هستید؟')) {
+                localStorage.removeItem(USER_KEY);
+                currentUser = '';
+                chatPage.classList.add('hidden');
+                loginPage.classList.remove('hidden');
+                userNameInput.value = '';
+                chatBox.innerHTML = '';
+                messageInput.value = '';
+            }
+        }
+
+        enterBtn.addEventListener('click', handleLogin);
+        userNameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        logoutBtn.addEventListener('click', logout);
+
+        setInterval(() => {
+            if (!chatPage.classList.contains('hidden')) {
+                renderMessages();
+            }
+        }, 3000);
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === STORAGE_KEY) {
+                if (!chatPage.classList.contains('hidden')) {
+                    renderMessages();
+                }
+            }
+        });
+
+        checkSavedUser();
+    })();
+</script>
+</body>
+</html>
