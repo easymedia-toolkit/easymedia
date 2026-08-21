@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>چت</title>
+    <title>چت با پشتیبان</title>
     <style>
         * {
             box-sizing: border-box;
@@ -40,6 +40,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #1e2a36;
+            flex-shrink: 0;
         }
         .chat-header .user-info {
             display: flex;
@@ -47,16 +48,16 @@
             gap: 12px;
         }
         .chat-header .avatar {
-            width: 42px;
-            height: 42px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
-            background: #4a6a8b;
+            background: #8b5cf6;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
         }
         .chat-header .user-details h3 {
             color: white;
@@ -78,6 +79,11 @@
             border-radius: 50%;
             background: #22c55e;
             display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
         }
         .chat-header .status span {
             color: #8aa3bc;
@@ -92,73 +98,10 @@
             font-size: 12px;
             cursor: pointer;
             transition: 0.2s;
+            font-family: inherit;
         }
         .btn-logout:hover {
             background: #c0392b;
-        }
-
-        /* لیست کاربران */
-        .user-list {
-            background: #f4f7fb;
-            padding: 8px 16px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            flex-shrink: 0;
-        }
-        .user-list::-webkit-scrollbar {
-            height: 3px;
-        }
-        .user-list::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        .user-chip {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            padding: 6px 14px 6px 10px;
-            border-radius: 30px;
-            border: 2px solid #e2e8f0;
-            cursor: pointer;
-            transition: 0.2s;
-            white-space: nowrap;
-            font-size: 13px;
-            font-weight: 500;
-            color: #1e293b;
-            flex-shrink: 0;
-        }
-        .user-chip:hover {
-            border-color: #94a3b8;
-        }
-        .user-chip.active {
-            border-color: #3b82f6;
-            background: #eff6ff;
-        }
-        .user-chip .chip-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #3b82f6;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-        .user-chip .chip-avatar.admin-avatar {
-            background: #8b5cf6;
-        }
-        .user-chip .online-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
-            display: inline-block;
         }
 
         /* باکس چت */
@@ -169,7 +112,7 @@
             background: #f8fafc;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
         .chat-box::-webkit-scrollbar {
             width: 4px;
@@ -184,7 +127,7 @@
             display: flex;
             flex-direction: column;
             max-width: 82%;
-            animation: fadeIn 0.2s ease;
+            animation: fadeIn 0.25s ease;
         }
         .message-wrapper.sent {
             align-self: flex-end;
@@ -228,9 +171,6 @@
         .message-wrapper.sent .message-time {
             color: #94a3b8;
         }
-        .message-wrapper.received .message-time {
-            color: #94a3b8;
-        }
 
         .message-sender {
             font-size: 11px;
@@ -242,13 +182,15 @@
         .message-wrapper.sent .message-sender {
             color: #93b5f0;
         }
+        .message-wrapper.received .message-sender {
+            color: #8b5cf6;
+        }
 
-        /* تاریخ */
         .date-divider {
             text-align: center;
             font-size: 11px;
             color: #94a3b8;
-            padding: 8px 0;
+            padding: 10px 0 6px;
             position: relative;
         }
         .date-divider span {
@@ -256,6 +198,8 @@
             padding: 0 14px;
             position: relative;
             z-index: 1;
+            font-size: 12px;
+            color: #64748b;
         }
         .date-divider::after {
             content: '';
@@ -268,7 +212,7 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -280,6 +224,7 @@
             background: white;
             border-top: 1px solid #e2e8f0;
             align-items: center;
+            flex-shrink: 0;
         }
         .chat-input-area input {
             flex: 1;
@@ -295,10 +240,6 @@
         .chat-input-area input:focus {
             border-color: #3b82f6;
             background: white;
-        }
-        .chat-input-area input:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
         .chat-input-area .btn-send {
             padding: 12px 24px;
@@ -316,10 +257,6 @@
         .chat-input-area .btn-send:hover {
             background: #2563eb;
             transform: scale(0.97);
-        }
-        .chat-input-area .btn-send:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         /* صفحه ورود */
@@ -403,20 +340,32 @@
             display: none !important;
         }
 
-        /* پیام خالی */
         .empty-chat {
             text-align: center;
             color: #94a3b8;
-            padding: 40px 20px;
+            padding: 50px 20px;
             font-size: 14px;
         }
         .empty-chat .empty-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
+            font-size: 52px;
+            margin-bottom: 14px;
             display: block;
         }
+        .empty-chat .empty-sub {
+            font-size: 12px;
+            color: #cbd5e1;
+            margin-top: 4px;
+        }
 
-        /* Responsive */
+        /* پیام جدید */
+        .new-msg-indicator {
+            text-align: center;
+            font-size: 11px;
+            color: #3b82f6;
+            padding: 4px 0;
+            font-weight: 500;
+        }
+
         @media (max-width: 500px) {
             .container {
                 height: 100vh;
@@ -432,18 +381,6 @@
             .chat-input-area {
                 padding: 10px 14px 14px;
             }
-            .user-list {
-                padding: 6px 12px;
-            }
-            .user-chip {
-                font-size: 12px;
-                padding: 4px 12px 4px 8px;
-            }
-            .user-chip .chip-avatar {
-                width: 24px;
-                height: 24px;
-                font-size: 10px;
-            }
         }
     </style>
 </head>
@@ -452,7 +389,7 @@
 <div class="container" id="app">
     <!-- صفحه ورود -->
     <div id="loginPage" class="login-container">
-        <h1>💬 چت</h1>
+        <h1>💬 چت با پشتیبان</h1>
         <p class="sub">نام خود را وارد کنید</p>
         <div class="form-group">
             <label>نام شما</label>
@@ -470,8 +407,8 @@
             <div class="user-info">
                 <div class="avatar" id="userAvatar">👤</div>
                 <div class="user-details">
-                    <h3 id="chatTitle">چت</h3>
-                    <span id="chatSubtitle">انتخاب کاربر</span>
+                    <h3>پشتیبان</h3>
+                    <span id="userStatus">آنلاین</span>
                 </div>
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
@@ -483,26 +420,19 @@
             </div>
         </div>
 
-        <!-- لیست کاربران -->
-        <div class="user-list" id="userList">
-            <div class="user-chip active" data-user="all">
-                <span>🌐</span>
-                <span>همه</span>
-            </div>
-        </div>
-
         <!-- باکس چت -->
         <div class="chat-box" id="chatBox">
             <div class="empty-chat">
                 <span class="empty-icon">💬</span>
-                <p>یک کاربر را انتخاب کنید تا مکالمه شروع شود</p>
+                <p>به پشتیبان پیام دهید</p>
+                <div class="empty-sub">پاسخ شما در اسرع وقت داده می‌شود</div>
             </div>
         </div>
 
         <!-- ورودی پیام -->
         <div class="chat-input-area">
-            <input type="text" id="messageInput" placeholder="پیام خود را بنویسید..." maxlength="500" disabled />
-            <button class="btn-send" id="sendBtn" disabled>ارسال</button>
+            <input type="text" id="messageInput" placeholder="پیام خود را بنویسید..." maxlength="500" />
+            <button class="btn-send" id="sendBtn">ارسال</button>
         </div>
     </div>
 </div>
@@ -512,7 +442,6 @@
         const STORAGE_KEY = 'chat_data';
         const USER_KEY = 'chat_user';
 
-        // ====== مدیریت پیام‌ها ======
         function loadMessages() {
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
@@ -524,7 +453,8 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
         }
 
-        function addMessage(sender, text, isAdmin = false, targetUser = null) {
+        // کاربر فقط با مدیر چت می‌کند (isAdmin = true)
+        function addMessage(sender, text) {
             const messages = loadMessages();
             messages.push({
                 id: Date.now() + '_' + Math.random().toString(36).substr(2, 6),
@@ -532,15 +462,10 @@
                 text: text.trim(),
                 timestamp: new Date().toISOString(),
                 timeDisplay: new Date().toLocaleString('fa-IR'),
-                isAdmin: !!isAdmin,
-                targetUser: targetUser || null  // null = برای همه
+                isAdmin: false
             });
             saveMessages(messages);
             return messages;
-        }
-
-        function clearAllMessages() {
-            localStorage.removeItem(STORAGE_KEY);
         }
 
         // ====== عناصر DOM ======
@@ -550,17 +475,13 @@
         const enterBtn = document.getElementById('enterBtn');
         const loginError = document.getElementById('loginError');
         const userAvatar = document.getElementById('userAvatar');
-        const chatTitle = document.getElementById('chatTitle');
-        const chatSubtitle = document.getElementById('chatSubtitle');
         const chatBox = document.getElementById('chatBox');
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
         const logoutBtn = document.getElementById('logoutBtn');
-        const userList = document.getElementById('userList');
+        const userStatus = document.getElementById('userStatus');
 
         let currentUser = '';
-        let selectedUser = 'all'; // 'all' یا نام کاربر خاص
-        let allUsers = new Set();
 
         // ====== توابع کمکی ======
         function escapeHtml(text) {
@@ -578,7 +499,7 @@
         }
 
         function getInitials(name) {
-            if (!name) return '?';
+            if (!name) return '👤';
             return name.charAt(0).toUpperCase();
         }
 
@@ -591,16 +512,6 @@
             return colors[Math.abs(hash) % colors.length];
         }
 
-        function getUniqueUsers(messages) {
-            const users = new Set();
-            messages.forEach(msg => {
-                if (!msg.isAdmin) {
-                    users.add(msg.sender);
-                }
-            });
-            return users;
-        }
-
         function isToday(date) {
             const today = new Date();
             return date.getDate() === today.getDate() &&
@@ -610,9 +521,7 @@
 
         function formatDate(date) {
             const d = new Date(date);
-            if (isToday(d)) {
-                return 'امروز';
-            }
+            if (isToday(d)) return 'امروز';
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
             if (d.getDate() === yesterday.getDate() &&
@@ -626,18 +535,10 @@
         // ====== رندر پیام‌ها ======
         function renderMessages() {
             const messages = loadMessages();
+            
+            // فقط پیام‌های مربوط به این کاربر و مدیر
             const filtered = messages.filter(msg => {
-                if (selectedUser === 'all') {
-                    return true;
-                }
-                // پیام‌های خصوصی
-                if (msg.targetUser) {
-                    return (msg.sender === selectedUser && msg.targetUser === currentUser) ||
-                           (msg.sender === currentUser && msg.targetUser === selectedUser) ||
-                           (msg.isAdmin && msg.targetUser === selectedUser);
-                }
-                // پیام‌های عمومی
-                return true;
+                return msg.sender === currentUser || msg.isAdmin === true;
             });
 
             chatBox.innerHTML = '';
@@ -646,8 +547,8 @@
                 chatBox.innerHTML = `
                     <div class="empty-chat">
                         <span class="empty-icon">💬</span>
-                        <p>هنوز پیامی وجود ندارد</p>
-                        <p style="font-size:12px;color:#cbd5e1;margin-top:4px;">پیام خود را بنویسید</p>
+                        <p>به پشتیبان پیام دهید</p>
+                        <div class="empty-sub">پاسخ شما در اسرع وقت داده می‌شود</div>
                     </div>
                 `;
                 return;
@@ -655,12 +556,11 @@
 
             let lastDate = '';
 
-            filtered.forEach((msg, index) => {
+            filtered.forEach(msg => {
                 const msgDate = new Date(msg.timestamp);
                 const dateStr = formatDate(msgDate);
                 const timeStr = msgDate.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
 
-                // نمایش تاریخ
                 if (dateStr !== lastDate) {
                     lastDate = dateStr;
                     const divider = document.createElement('div');
@@ -681,11 +581,10 @@
                     wrapper.classList.add('received');
                 }
 
-                // نام فرستنده
                 const senderName = document.createElement('div');
                 senderName.className = 'message-sender';
                 if (isAdmin) {
-                    senderName.textContent = '🛡️ مدیر';
+                    senderName.textContent = '🛡️ پشتیبان';
                 } else if (isOwn) {
                     senderName.textContent = 'شما';
                 } else {
@@ -693,16 +592,14 @@
                 }
                 wrapper.appendChild(senderName);
 
-                // حباب پیام
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
-                if (isAdmin && !isOwn) {
+                if (isAdmin) {
                     bubble.classList.add('admin-msg');
                 }
                 bubble.textContent = msg.text;
                 wrapper.appendChild(bubble);
 
-                // زمان
                 const time = document.createElement('div');
                 time.className = 'message-time';
                 time.textContent = timeStr;
@@ -712,81 +609,6 @@
             });
 
             chatBox.scrollTop = chatBox.scrollHeight;
-            updateUserList();
-        }
-
-        // ====== به‌روزرسانی لیست کاربران ======
-        function updateUserList() {
-            const messages = loadMessages();
-            const users = getUniqueUsers(messages);
-            allUsers = users;
-
-            // حفظ کاربر انتخاب شده
-            const currentSelected = selectedUser;
-
-            // پاک کردن لیست به جز گزینه "همه"
-            while (userList.children.length > 1) {
-                userList.removeChild(userList.lastChild);
-            }
-
-            // اضافه کردن کاربران
-            users.forEach(user => {
-                const chip = document.createElement('div');
-                chip.className = 'user-chip';
-                if (user === currentSelected) {
-                    chip.classList.add('active');
-                }
-                chip.dataset.user = user;
-
-                const color = getColorFromName(user);
-                chip.innerHTML = `
-                    <span class="chip-avatar" style="background:${color}">${getInitials(user)}</span>
-                    <span>${user}</span>
-                    <span class="online-dot"></span>
-                `;
-
-                chip.addEventListener('click', () => {
-                    document.querySelectorAll('.user-chip').forEach(c => c.classList.remove('active'));
-                    chip.classList.add('active');
-                    selectedUser = user;
-                    updateChatTitle();
-                    renderMessages();
-                    enableInput();
-                });
-
-                userList.appendChild(chip);
-            });
-
-            // اگر کاربر انتخاب شده دیگر وجود ندارد، به "همه" برگرد
-            if (selectedUser !== 'all' && !users.has(selectedUser)) {
-                selectedUser = 'all';
-                document.querySelectorAll('.user-chip').forEach(c => c.classList.remove('active'));
-                userList.firstChild.classList.add('active');
-                updateChatTitle();
-            }
-
-            updateChatTitle();
-        }
-
-        // ====== آپدیت تایتل ======
-        function updateChatTitle() {
-            if (selectedUser === 'all') {
-                chatTitle.textContent = 'گفتگوی عمومی';
-                chatSubtitle.textContent = 'همه کاربران';
-                userAvatar.textContent = '🌐';
-            } else {
-                chatTitle.textContent = selectedUser;
-                chatSubtitle.textContent = 'مکالمه خصوصی';
-                userAvatar.textContent = getInitials(selectedUser);
-                userAvatar.style.background = getColorFromName(selectedUser);
-            }
-        }
-
-        // ====== فعال/غیرفعال کردن ورودی ======
-        function enableInput() {
-            messageInput.disabled = false;
-            sendBtn.disabled = false;
-            messageInput.placeholder = selectedUser === 'all' ? 'پیام به همه...' : `پیام به ${selectedUser}...`;
         }
 
         // ====== ورود به چت ======
@@ -795,13 +617,11 @@
             chatPage.classList.remove('hidden');
             chatPage.style.display = 'flex';
             
-            // تنظیم avatars
             userAvatar.textContent = getInitials(currentUser);
             userAvatar.style.background = getColorFromName(currentUser);
+            userStatus.textContent = 'آنلاین';
             
             renderMessages();
-            updateUserList();
-            enableInput();
             messageInput.value = '';
             messageInput.focus();
         }
@@ -817,6 +637,19 @@
                 showError(loginError, 'نام باید حداقل ۲ حرف باشد');
                 return;
             }
+            // بررسی اینکه اسم تکراری نباشد
+            const messages = loadMessages();
+            const existingUsers = new Set();
+            messages.forEach(msg => {
+                if (!msg.isAdmin) {
+                    existingUsers.add(msg.sender);
+                }
+            });
+            if (existingUsers.has(name) && name !== localStorage.getItem(USER_KEY)) {
+                showError(loginError, 'این نام قبلاً ثبت شده است. نام دیگری انتخاب کنید');
+                return;
+            }
+
             currentUser = name;
             localStorage.setItem(USER_KEY, name);
             enterChat();
@@ -827,8 +660,7 @@
             const text = messageInput.value.trim();
             if (!text) return;
 
-            const target = selectedUser === 'all' ? null : selectedUser;
-            addMessage(currentUser, text, false, target);
+            addMessage(currentUser, text);
             renderMessages();
             messageInput.value = '';
             messageInput.focus();
@@ -839,15 +671,12 @@
             if (confirm('آیا مطمئن هستید؟')) {
                 localStorage.removeItem(USER_KEY);
                 currentUser = '';
-                selectedUser = 'all';
                 chatPage.style.display = 'none';
                 chatPage.classList.add('hidden');
                 loginPage.classList.remove('hidden');
                 userNameInput.value = '';
                 chatBox.innerHTML = '';
                 messageInput.value = '';
-                messageInput.disabled = true;
-                sendBtn.disabled = true;
             }
         }
 
@@ -873,16 +702,6 @@
         });
 
         logoutBtn.addEventListener('click', logout);
-
-        // کلیک روی "همه"
-        document.querySelector('.user-chip[data-user="all"]').addEventListener('click', function() {
-            document.querySelectorAll('.user-chip').forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            selectedUser = 'all';
-            updateChatTitle();
-            renderMessages();
-            enableInput();
-        });
 
         // ====== به‌روزرسانی خودکار ======
         setInterval(() => {

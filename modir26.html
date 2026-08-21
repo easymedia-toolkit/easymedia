@@ -21,7 +21,7 @@
             margin: 0;
         }
         .container {
-            max-width: 520px;
+            max-width: 900px;
             width: 100%;
             background: #1e293b;
             border-radius: 30px;
@@ -29,18 +29,163 @@
             overflow: hidden;
             height: 750px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             border: 1px solid #334155;
         }
 
-        /* هدر */
-        .chat-header {
+        /* ====== سایدبار (لیست کاربران) ====== */
+        .sidebar {
+            width: 300px;
             background: #0f172a;
+            border-right: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .sidebar-header {
             padding: 16px 20px;
+            background: #0f172a;
+            border-bottom: 1px solid #334155;
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        .sidebar-header h2 {
+            color: #f1f5f9;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .sidebar-header .badge-count {
+            background: #8b5cf6;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .sidebar-header .btn-logout-small {
+            background: #e74c5e;
+            color: white;
+            border: none;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .sidebar-header .btn-logout-small:hover {
+            background: #c0392b;
+        }
+
+        .user-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 6px 0;
+        }
+        .user-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .user-list::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 1px solid #1a2234;
+        }
+        .user-item:hover {
+            background: #1e293b;
+        }
+        .user-item.active {
+            background: #2d1b4e;
+            border-left: 3px solid #8b5cf6;
+        }
+        .user-item .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .user-item .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .user-item .user-info .name {
+            color: #f1f5f9;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .user-item .user-info .last-msg {
+            color: #94a3b8;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .user-item .user-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .user-item .user-meta .time {
+            color: #64748b;
+            font-size: 10px;
+        }
+        .user-item .user-meta .unread {
+            background: #8b5cf6;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            min-width: 20px;
+            text-align: center;
+        }
+        .user-item .online-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #22c55e;
+            display: inline-block;
+            flex-shrink: 0;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ====== بخش چت ====== */
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0f172a;
+            min-width: 0;
+        }
+
+        .chat-header {
+            padding: 14px 20px;
+            background: #0f172a;
             border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
         }
         .chat-header .user-info {
             display: flex;
@@ -48,20 +193,19 @@
             gap: 12px;
         }
         .chat-header .avatar {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: #8b5cf6;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
         }
         .chat-header .user-details h3 {
             color: #f1f5f9;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
         }
         .chat-header .user-details span {
@@ -79,87 +223,13 @@
             border-radius: 50%;
             background: #22c55e;
             display: inline-block;
+            animation: pulse 1.5s infinite;
         }
         .chat-header .status span {
             color: #94a3b8;
             font-size: 12px;
         }
-        .btn-logout {
-            background: #e74c5e;
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-logout:hover {
-            background: #c0392b;
-        }
 
-        /* لیست کاربران */
-        .user-list {
-            background: #0f172a;
-            padding: 8px 16px;
-            border-bottom: 1px solid #334155;
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            flex-shrink: 0;
-        }
-        .user-list::-webkit-scrollbar {
-            height: 3px;
-        }
-        .user-list::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 10px;
-        }
-        .user-chip {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #1e293b;
-            padding: 6px 14px 6px 10px;
-            border-radius: 30px;
-            border: 2px solid #334155;
-            cursor: pointer;
-            transition: 0.2s;
-            white-space: nowrap;
-            font-size: 13px;
-            font-weight: 500;
-            color: #e2e8f0;
-            flex-shrink: 0;
-        }
-        .user-chip:hover {
-            border-color: #64748b;
-        }
-        .user-chip.active {
-            border-color: #8b5cf6;
-            background: #2d1b4e;
-        }
-        .user-chip .chip-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #8b5cf6;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-        .user-chip .online-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
-            display: inline-block;
-        }
-
-        /* باکس چت */
         .chat-box {
             flex: 1;
             padding: 16px 18px;
@@ -167,7 +237,7 @@
             background: #0f172a;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
         .chat-box::-webkit-scrollbar {
             width: 4px;
@@ -177,12 +247,11 @@
             border-radius: 10px;
         }
 
-        /* پیام‌ها */
         .message-wrapper {
             display: flex;
             flex-direction: column;
             max-width: 85%;
-            animation: fadeIn 0.2s ease;
+            animation: fadeIn 0.25s ease;
         }
         .message-wrapper.sent {
             align-self: flex-end;
@@ -211,10 +280,6 @@
             border: 1px solid #334155;
             border-bottom-left-radius: 4px;
         }
-        .message-wrapper.received .message-bubble.admin-msg {
-            background: #2d1b4e;
-            border-color: #8b5cf6;
-        }
 
         .message-time {
             font-size: 10px;
@@ -237,7 +302,7 @@
             text-align: center;
             font-size: 11px;
             color: #64748b;
-            padding: 8px 0;
+            padding: 10px 0 6px;
             position: relative;
         }
         .date-divider span {
@@ -245,6 +310,7 @@
             padding: 0 14px;
             position: relative;
             z-index: 1;
+            font-size: 12px;
         }
         .date-divider::after {
             content: '';
@@ -257,11 +323,27 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ورودی */
+        .empty-chat {
+            text-align: center;
+            color: #64748b;
+            padding: 50px 20px;
+            font-size: 14px;
+        }
+        .empty-chat .empty-icon {
+            font-size: 52px;
+            margin-bottom: 14px;
+            display: block;
+        }
+        .empty-chat .empty-sub {
+            font-size: 12px;
+            color: #475569;
+            margin-top: 4px;
+        }
+
         .chat-input-area {
             display: flex;
             gap: 10px;
@@ -269,6 +351,7 @@
             background: #0f172a;
             border-top: 1px solid #334155;
             align-items: center;
+            flex-shrink: 0;
         }
         .chat-input-area input {
             flex: 1;
@@ -315,20 +398,20 @@
             cursor: not-allowed;
         }
 
-        /* دکمه‌های پایین */
         .action-bar {
             display: flex;
             gap: 8px;
-            padding: 8px 18px 14px;
+            padding: 6px 18px 12px;
             background: #0f172a;
             border-top: 1px solid #1e293b;
+            flex-shrink: 0;
         }
         .action-bar .btn {
             flex: 1;
-            padding: 8px;
+            padding: 6px;
             border: none;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
@@ -351,13 +434,16 @@
             color: white;
         }
 
-        /* صفحه ورود */
+        /* ====== صفحه ورود ====== */
         .login-container {
+            width: 100%;
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
             padding: 40px 30px;
+            background: #1e293b;
         }
         .login-container h1 {
             font-size: 28px;
@@ -372,6 +458,8 @@
             font-size: 14px;
         }
         .login-container .form-group {
+            width: 100%;
+            max-width: 360px;
             margin-bottom: 16px;
         }
         .login-container label {
@@ -402,6 +490,7 @@
         }
         .login-container .btn-login {
             width: 100%;
+            max-width: 360px;
             padding: 14px;
             background: #8b5cf6;
             color: white;
@@ -426,6 +515,8 @@
             margin-top: 10px;
             text-align: center;
             border: 1px solid #991b1b;
+            max-width: 360px;
+            width: 100%;
         }
         .login-container .footer-note {
             text-align: center;
@@ -437,27 +528,31 @@
             display: none !important;
         }
 
-        .empty-chat {
-            text-align: center;
-            color: #64748b;
-            padding: 40px 20px;
-            font-size: 14px;
-        }
-        .empty-chat .empty-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-            display: block;
-        }
-
         /* Responsive */
-        @media (max-width: 500px) {
+        @media (max-width: 700px) {
             .container {
                 height: 100vh;
                 max-height: 100vh;
                 border-radius: 0;
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: 45%;
+                border-right: none;
+                border-bottom: 1px solid #334155;
+            }
+            .chat-section {
+                height: 55%;
+            }
+            .sidebar-header {
+                padding: 12px 16px;
+            }
+            .user-item {
+                padding: 10px 16px;
             }
             .chat-header {
-                padding: 12px 16px;
+                padding: 10px 16px;
             }
             .chat-box {
                 padding: 12px 14px;
@@ -465,17 +560,10 @@
             .chat-input-area {
                 padding: 10px 14px 14px;
             }
-            .user-list {
-                padding: 6px 12px;
-            }
-            .user-chip {
-                font-size: 12px;
-                padding: 4px 12px 4px 8px;
-            }
-            .user-chip .chip-avatar {
-                width: 24px;
-                height: 24px;
-                font-size: 10px;
+        }
+        @media (max-width: 500px) {
+            .user-item .user-info .last-msg {
+                max-width: 120px;
             }
         }
     </style>
@@ -501,51 +589,58 @@
     </div>
 
     <!-- صفحه مدیریت -->
-    <div id="panelPage" class="hidden" style="height:100%;display:flex;flex-direction:column;">
-        <!-- هدر -->
-        <div class="chat-header">
-            <div class="user-info">
-                <div class="avatar">🛡️</div>
-                <div class="user-details">
-                    <h3 id="chatTitle">مدیریت</h3>
-                    <span id="chatSubtitle">انتخاب کاربر</span>
+    <div id="panelPage" class="hidden" style="width:100%;height:100%;display:flex;flex-direction:row;">
+        <!-- سایدبار -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <h2>💬 پیام‌ها</h2>
+                    <span class="badge-count" id="totalUsers">0</span>
                 </div>
+                <button class="btn-logout-small" id="logoutBtn">خروج</button>
             </div>
-            <div style="display:flex;align-items:center;gap:10px;">
+            <div class="user-list" id="userList">
+                <!-- کاربران توسط JS ساخته می‌شوند -->
+            </div>
+        </div>
+
+        <!-- بخش چت -->
+        <div class="chat-section">
+            <!-- هدر چت -->
+            <div class="chat-header" id="chatHeader">
+                <div class="user-info">
+                    <div class="avatar" id="chatAvatar" style="background:#8b5cf6;">🛡️</div>
+                    <div class="user-details">
+                        <h3 id="chatTitle">انتخاب کاربر</h3>
+                        <span id="chatSubtitle">از لیست سمت راست انتخاب کنید</span>
+                    </div>
+                </div>
                 <div class="status">
                     <span class="dot"></span>
                     <span>آنلاین</span>
                 </div>
-                <button class="btn-logout" id="logoutBtn">خروج</button>
             </div>
-        </div>
 
-        <!-- لیست کاربران -->
-        <div class="user-list" id="userList">
-            <div class="user-chip active" data-user="all">
-                <span>🌐</span>
-                <span>همه</span>
+            <!-- باکس چت -->
+            <div class="chat-box" id="chatBox">
+                <div class="empty-chat">
+                    <span class="empty-icon">👈</span>
+                    <p>یک کاربر را انتخاب کنید</p>
+                    <div class="empty-sub">از لیست سمت راست کاربر مورد نظر را انتخاب کنید</div>
+                </div>
             </div>
-        </div>
 
-        <!-- باکس چت -->
-        <div class="chat-box" id="chatBox">
-            <div class="empty-chat">
-                <span class="empty-icon">💬</span>
-                <p>یک کاربر را انتخاب کنید</p>
+            <!-- ورودی پیام -->
+            <div class="chat-input-area">
+                <input type="text" id="messageInput" placeholder="پیام خود را بنویسید..." maxlength="500" disabled />
+                <button class="btn-send" id="sendBtn" disabled>ارسال</button>
             </div>
-        </div>
 
-        <!-- ورودی پیام -->
-        <div class="chat-input-area">
-            <input type="text" id="messageInput" placeholder="پیام خود را بنویسید..." maxlength="500" disabled />
-            <button class="btn-send" id="sendBtn" disabled>ارسال</button>
-        </div>
-
-        <!-- دکمه‌های عملیات -->
-        <div class="action-bar">
-            <button class="btn btn-warning" id="clearBtn">🗑 پاک کردن همه</button>
-            <button class="btn btn-outline" id="refreshBtn">🔄 به‌روزرسانی</button>
+            <!-- دکمه‌های عملیات -->
+            <div class="action-bar">
+                <button class="btn btn-warning" id="clearBtn">🗑 پاک کردن همه</button>
+                <button class="btn btn-outline" id="refreshBtn">🔄 به‌روزرسانی</button>
+            </div>
         </div>
     </div>
 </div>
@@ -556,6 +651,10 @@
         const ADMIN_USER = 'admin';
         const ADMIN_PASS = '1234';
 
+        let isLoggedIn = false;
+        let selectedUser = null; // نام کاربر انتخاب شده
+
+        // ====== مدیریت پیام‌ها ======
         function loadMessages() {
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
@@ -567,7 +666,7 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
         }
 
-        function addAdminMessage(text, targetUser = null) {
+        function addAdminMessage(text, targetUser) {
             const messages = loadMessages();
             messages.push({
                 id: Date.now() + '_' + Math.random().toString(36).substr(2, 6),
@@ -575,8 +674,7 @@
                 text: text.trim(),
                 timestamp: new Date().toISOString(),
                 timeDisplay: new Date().toLocaleString('fa-IR'),
-                isAdmin: true,
-                targetUser: targetUser || null
+                isAdmin: true
             });
             saveMessages(messages);
             return messages;
@@ -585,26 +683,6 @@
         function clearAllMessages() {
             localStorage.removeItem(STORAGE_KEY);
         }
-
-        // ====== عناصر DOM ======
-        const loginPage = document.getElementById('loginPage');
-        const panelPage = document.getElementById('panelPage');
-        const usernameInput = document.getElementById('usernameInput');
-        const passwordInput = document.getElementById('passwordInput');
-        const loginBtn = document.getElementById('loginBtn');
-        const loginError = document.getElementById('loginError');
-        const chatTitle = document.getElementById('chatTitle');
-        const chatSubtitle = document.getElementById('chatSubtitle');
-        const chatBox = document.getElementById('chatBox');
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const userList = document.getElementById('userList');
-        const clearBtn = document.getElementById('clearBtn');
-        const refreshBtn = document.getElementById('refreshBtn');
-
-        let isLoggedIn = false;
-        let selectedUser = 'all';
 
         // ====== توابع کمکی ======
         function escapeHtml(text) {
@@ -645,6 +723,35 @@
             return users;
         }
 
+        function getLastMessageForUser(messages, username) {
+            const userMsgs = messages.filter(m => m.sender === username || m.isAdmin);
+            if (userMsgs.length === 0) return null;
+            return userMsgs[userMsgs.length - 1];
+        }
+
+        function getUnreadCount(messages, username) {
+            // ساده: تعداد پیام‌های کاربر که پاسخ داده نشده
+            const userMsgs = messages.filter(m => m.sender === username && !m.isAdmin);
+            const adminReplies = messages.filter(m => m.isAdmin);
+            // اگر آخرین پیام از ادمین باشد، یعنی پاسخ داده شده
+            const lastMsg = messages.filter(m => m.sender === username || m.isAdmin);
+            if (lastMsg.length === 0) return 0;
+            const last = lastMsg[lastMsg.length - 1];
+            if (last.isAdmin) return 0;
+            // شمارش پیام‌های بدون پاسخ
+            let count = 0;
+            let hasReply = false;
+            for (let i = messages.length - 1; i >= 0; i--) {
+                if (messages[i].sender === username && !messages[i].isAdmin) {
+                    if (!hasReply) count++;
+                }
+                if (messages[i].isAdmin) {
+                    hasReply = true;
+                }
+            }
+            return count;
+        }
+
         function isToday(date) {
             const today = new Date();
             return date.getDate() === today.getDate() &&
@@ -665,28 +772,124 @@
             return d.toLocaleDateString('fa-IR');
         }
 
+        // ====== عناصر DOM ======
+        const loginPage = document.getElementById('loginPage');
+        const panelPage = document.getElementById('panelPage');
+        const usernameInput = document.getElementById('usernameInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginError = document.getElementById('loginError');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userList = document.getElementById('userList');
+        const chatBox = document.getElementById('chatBox');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatTitle = document.getElementById('chatTitle');
+        const chatSubtitle = document.getElementById('chatSubtitle');
+        const chatAvatar = document.getElementById('chatAvatar');
+        const clearBtn = document.getElementById('clearBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const totalUsers = document.getElementById('totalUsers');
+
+        // ====== رندر لیست کاربران ======
+        function renderUserList() {
+            const messages = loadMessages();
+            const users = getUniqueUsers(messages);
+            totalUsers.textContent = users.size;
+
+            userList.innerHTML = '';
+
+            if (users.size === 0) {
+                userList.innerHTML = `
+                    <div style="text-align:center;color:#64748b;padding:30px 20px;font-size:13px;">
+                        <div style="font-size:32px;margin-bottom:8px;">👤</div>
+                        هنوز کاربری ثبت نشده است
+                    </div>
+                `;
+                return;
+            }
+
+            users.forEach(user => {
+                const item = document.createElement('div');
+                item.className = 'user-item';
+                if (selectedUser === user) item.classList.add('active');
+
+                const color = getColorFromName(user);
+                const lastMsg = getLastMessageForUser(messages, user);
+                const unread = getUnreadCount(messages, user);
+
+                item.innerHTML = `
+                    <div class="user-avatar" style="background:${color}">${getInitials(user)}</div>
+                    <div class="user-info">
+                        <div class="name">${user}</div>
+                        <div class="last-msg">${lastMsg ? escapeHtml(lastMsg.text) : 'بدون پیام'}</div>
+                    </div>
+                    <div class="user-meta">
+                        <div class="time">${lastMsg ? new Date(lastMsg.timestamp).toLocaleTimeString('fa-IR', {hour:'2-digit',minute:'2-digit'}) : ''}</div>
+                        ${unread > 0 ? `<div class="unread">${unread}</div>` : ''}
+                        <span class="online-dot"></span>
+                    </div>
+                `;
+
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
+                    item.classList.add('active');
+                    selectedUser = user;
+                    updateChatHeader();
+                    renderMessages();
+                    enableInput();
+                });
+
+                userList.appendChild(item);
+            });
+        }
+
+        // ====== آپدیت هدر چت ======
+        function updateChatHeader() {
+            if (selectedUser) {
+                const color = getColorFromName(selectedUser);
+                chatTitle.textContent = selectedUser;
+                chatSubtitle.textContent = 'مکالمه خصوصی';
+                chatAvatar.textContent = getInitials(selectedUser);
+                chatAvatar.style.background = color;
+            } else {
+                chatTitle.textContent = 'انتخاب کاربر';
+                chatSubtitle.textContent = 'از لیست سمت راست انتخاب کنید';
+                chatAvatar.textContent = '🛡️';
+                chatAvatar.style.background = '#8b5cf6';
+            }
+        }
+
         // ====== رندر پیام‌ها ======
         function renderMessages() {
             const messages = loadMessages();
-            const filtered = messages.filter(msg => {
-                if (selectedUser === 'all') {
-                    return true;
-                }
-                if (msg.targetUser) {
-                    return msg.sender === selectedUser ||
-                           (msg.isAdmin && msg.targetUser === selectedUser) ||
-                           (msg.sender === 'مدیر' && msg.targetUser === selectedUser);
-                }
-                return true;
-            });
+            
+            let filtered = [];
+            if (selectedUser) {
+                filtered = messages.filter(msg => {
+                    return msg.sender === selectedUser || msg.isAdmin === true;
+                });
+            }
 
             chatBox.innerHTML = '';
+
+            if (!selectedUser) {
+                chatBox.innerHTML = `
+                    <div class="empty-chat">
+                        <span class="empty-icon">👈</span>
+                        <p>یک کاربر را انتخاب کنید</p>
+                        <div class="empty-sub">از لیست سمت راست کاربر مورد نظر را انتخاب کنید</div>
+                    </div>
+                `;
+                return;
+            }
 
             if (filtered.length === 0) {
                 chatBox.innerHTML = `
                     <div class="empty-chat">
                         <span class="empty-icon">💬</span>
-                        <p>هنوز پیامی وجود ندارد</p>
+                        <p>هیچ پیامی با ${selectedUser} وجود ندارد</p>
+                        <div class="empty-sub">اولین پیام را ارسال کنید</div>
                     </div>
                 `;
                 return;
@@ -729,9 +932,6 @@
 
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
-                if (!msg.isAdmin) {
-                    bubble.classList.add('admin-msg');
-                }
                 bubble.textContent = msg.text;
                 wrapper.appendChild(bubble);
 
@@ -744,69 +944,20 @@
             });
 
             chatBox.scrollTop = chatBox.scrollHeight;
-            updateUserList();
-        }
-
-        // ====== به‌روزرسانی لیست کاربران ======
-        function updateUserList() {
-            const messages = loadMessages();
-            const users = getUniqueUsers(messages);
-
-            while (userList.children.length > 1) {
-                userList.removeChild(userList.lastChild);
-            }
-
-            users.forEach(user => {
-                const chip = document.createElement('div');
-                chip.className = 'user-chip';
-                if (user === selectedUser) chip.classList.add('active');
-                chip.dataset.user = user;
-
-                const color = getColorFromName(user);
-                chip.innerHTML = `
-                    <span class="chip-avatar" style="background:${color}">${getInitials(user)}</span>
-                    <span>${user}</span>
-                    <span class="online-dot"></span>
-                `;
-
-                chip.addEventListener('click', () => {
-                    document.querySelectorAll('.user-chip').forEach(c => c.classList.remove('active'));
-                    chip.classList.add('active');
-                    selectedUser = user;
-                    updateChatTitle();
-                    renderMessages();
-                    enableInput();
-                });
-
-                userList.appendChild(chip);
-            });
-
-            if (selectedUser !== 'all' && !users.has(selectedUser)) {
-                selectedUser = 'all';
-                document.querySelectorAll('.user-chip').forEach(c => c.classList.remove('active'));
-                userList.firstChild.classList.add('active');
-                updateChatTitle();
-            }
-
-            updateChatTitle();
-        }
-
-        // ====== آپدیت تایتل ======
-        function updateChatTitle() {
-            if (selectedUser === 'all') {
-                chatTitle.textContent = 'گفتگوی عمومی';
-                chatSubtitle.textContent = 'همه کاربران';
-            } else {
-                chatTitle.textContent = selectedUser;
-                chatSubtitle.textContent = 'مکالمه خصوصی';
-            }
+            renderUserList();
         }
 
         // ====== فعال/غیرفعال کردن ورودی ======
         function enableInput() {
-            messageInput.disabled = false;
-            sendBtn.disabled = false;
-            messageInput.placeholder = selectedUser === 'all' ? 'پیام به همه...' : `پیام به ${selectedUser}...`;
+            if (selectedUser) {
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+                messageInput.placeholder = `پیام به ${selectedUser}...`;
+            } else {
+                messageInput.disabled = true;
+                sendBtn.disabled = true;
+                messageInput.placeholder = 'ابتدا کاربر را انتخاب کنید';
+            }
         }
 
         // ====== ورود ======
@@ -819,12 +970,15 @@
                 loginPage.classList.add('hidden');
                 panelPage.classList.remove('hidden');
                 panelPage.style.display = 'flex';
+                selectedUser = null;
+                renderUserList();
                 renderMessages();
+                updateChatHeader();
+                enableInput();
                 messageInput.value = '';
                 loginError.classList.add('hidden');
                 usernameInput.value = '';
                 passwordInput.value = '';
-                enableInput();
             } else {
                 showError(loginError, 'نام کاربری یا رمز عبور اشتباه است');
             }
@@ -832,12 +986,11 @@
 
         // ====== ارسال پیام ======
         function sendMessage() {
-            if (!isLoggedIn) return;
+            if (!isLoggedIn || !selectedUser) return;
             const text = messageInput.value.trim();
             if (!text) return;
 
-            const target = selectedUser === 'all' ? null : selectedUser;
-            addAdminMessage(text, target);
+            addAdminMessage(text, selectedUser);
             renderMessages();
             messageInput.value = '';
             messageInput.focus();
@@ -847,7 +1000,7 @@
         function logout() {
             if (confirm('آیا مطمئن هستید؟')) {
                 isLoggedIn = false;
-                selectedUser = 'all';
+                selectedUser = null;
                 panelPage.style.display = 'none';
                 panelPage.classList.add('hidden');
                 loginPage.classList.remove('hidden');
@@ -855,6 +1008,7 @@
                 messageInput.value = '';
                 messageInput.disabled = true;
                 sendBtn.disabled = true;
+                userList.innerHTML = '';
             }
         }
 
@@ -871,28 +1025,24 @@
 
         logoutBtn.addEventListener('click', logout);
 
-        document.querySelector('.user-chip[data-user="all"]').addEventListener('click', function() {
-            document.querySelectorAll('.user-chip').forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            selectedUser = 'all';
-            updateChatTitle();
-            renderMessages();
-            enableInput();
-        });
-
         clearBtn.addEventListener('click', () => {
             if (confirm('⚠️ همه پیام‌ها پاک می‌شوند! ادامه؟')) {
                 clearAllMessages();
                 renderMessages();
+                renderUserList();
             }
         });
 
-        refreshBtn.addEventListener('click', renderMessages);
+        refreshBtn.addEventListener('click', () => {
+            renderMessages();
+            renderUserList();
+        });
 
         // ====== به‌روزرسانی خودکار ======
         setInterval(() => {
             if (!panelPage.classList.contains('hidden') && panelPage.style.display !== 'none') {
                 renderMessages();
+                renderUserList();
             }
         }, 3000);
 
@@ -900,6 +1050,7 @@
             if (e.key === STORAGE_KEY) {
                 if (!panelPage.classList.contains('hidden') && panelPage.style.display !== 'none') {
                     renderMessages();
+                    renderUserList();
                 }
             }
         });
