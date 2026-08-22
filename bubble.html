@@ -31,23 +31,27 @@
             --warning: #f39c12;
         }
 
+        /* ====== FIX: Smooth scrolling everywhere ====== */
         html,
         body {
             height: 100%;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: none;
+            touch-action: manipulation;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
-            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 12px;
-            margin: 0;
-            overscroll-behavior: contain;
+            min-height: 100vh;
         }
 
         .container {
@@ -63,6 +67,7 @@
             display: flex;
             flex-direction: column;
             overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* ====== PAGES ====== */
@@ -70,11 +75,32 @@
             display: none;
             flex-direction: column;
             height: 100%;
-            animation: fadeIn 0.4s ease;
             overflow: hidden;
+            animation: fadeIn 0.4s ease;
+            -webkit-overflow-scrolling: touch;
         }
         .page.active {
             display: flex;
+        }
+
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            padding: 0;
+            margin: 0;
+        }
+        .scroll-area::-webkit-scrollbar {
+            width: 4px;
+        }
+        .scroll-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .scroll-area::-webkit-scrollbar-thumb {
+            background: #d1d8e0;
+            border-radius: 10px;
         }
 
         @keyframes fadeIn {
@@ -140,35 +166,55 @@
                 box-shadow: 0 0 30px rgba(108, 99, 255, 0.5);
             }
         }
-        @keyframes countdownPulse {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
         }
 
-        /* ====== SCROLLBAR ====== */
-        ::-webkit-scrollbar {
-            width: 4px;
+        /* ====== LOADING OVERLAY ====== */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            flex-direction: column;
+            gap: 12px;
         }
-        ::-webkit-scrollbar-track {
-            background: transparent;
+        .loading-overlay.active {
+            display: flex;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #d1d8e0;
-            border-radius: 10px;
+        .loading-overlay .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e9edf2;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .loading-overlay .loading-text {
+            color: var(--text-light);
+            font-size: 14px;
+            font-weight: 500;
         }
 
         /* ====== LOGIN PAGE ====== */
         #loginPage {
             justify-content: center;
-            padding: 30px 24px;
+            padding: 0;
             background: linear-gradient(135deg, #f5f7fa 0%, #e8edf5 100%);
-            overflow-y: auto;
-            overscroll-behavior: contain;
+        }
+        #loginPage .scroll-area {
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .logo {
@@ -251,6 +297,7 @@
             background: var(--bg);
             outline: none;
             font-family: inherit;
+            -webkit-appearance: none;
         }
         .input-group input:focus {
             border-color: var(--primary);
@@ -280,6 +327,7 @@
             font-family: inherit;
             position: relative;
             overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
         .btn-primary:hover {
             background: var(--primary-dark);
@@ -307,13 +355,6 @@
         }
         .btn-danger:hover {
             background: #c0392b;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-        }
-        .btn-warning:hover {
-            background: #d68910;
         }
 
         .error-msg {
@@ -386,11 +427,6 @@
             user-select: all;
             cursor: pointer;
         }
-        .code-display-box .code-hint {
-            font-size: 12px;
-            color: var(--text-light);
-            margin-top: 4px;
-        }
         .code-display-box .copy-btn {
             background: var(--primary);
             color: white;
@@ -408,45 +444,6 @@
             transform: scale(1.02);
         }
 
-        /* ====== COUNTDOWN TIMER ====== */
-        .countdown-timer {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin: 10px 0;
-            padding: 8px 16px;
-            background: #fef9e7;
-            border-radius: var(--radius-sm);
-            border: 1px solid #f9e79f;
-        }
-        .countdown-timer .timer-number {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--warning);
-            font-family: 'Courier New', monospace;
-            animation: countdownPulse 1s infinite;
-        }
-        .countdown-timer .timer-label {
-            font-size: 13px;
-            color: #7d6608;
-        }
-        .countdown-timer .timer-bar {
-            flex: 1;
-            height: 4px;
-            background: #f9e79f;
-            border-radius: 2px;
-            overflow: hidden;
-            max-width: 100px;
-        }
-        .countdown-timer .timer-bar .timer-fill {
-            height: 100%;
-            background: var(--warning);
-            border-radius: 2px;
-            transition: width 0.5s linear;
-            width: 100%;
-        }
-
         /* ====== DASHBOARD ====== */
         #dashboardPage {
             background: var(--bg);
@@ -461,12 +458,14 @@
             align-items: center;
             border-bottom: 1px solid #e9edf2;
             flex-shrink: 0;
+            min-height: 60px;
         }
         .header-left {
             display: flex;
             align-items: center;
             gap: 12px;
             cursor: pointer;
+            min-width: 0;
         }
         .user-avatar {
             width: 44px;
@@ -491,6 +490,10 @@
             font-weight: 600;
             font-size: 15px;
             display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
         }
         .user-status {
             font-size: 12px;
@@ -505,7 +508,7 @@
 
         .header-right {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             flex-shrink: 0;
         }
         .icon-btn {
@@ -523,6 +526,7 @@
             justify-content: center;
             font-family: inherit;
             flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
         }
         .icon-btn:hover {
             background: var(--primary);
@@ -546,6 +550,7 @@
             transition: var(--transition);
             background: var(--bg);
             font-family: inherit;
+            -webkit-appearance: none;
         }
         .search-bar input:focus {
             border-color: var(--primary);
@@ -555,13 +560,17 @@
         .contacts-list {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 6px 0;
             background: var(--white);
-            overscroll-behavior: contain;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
         .contacts-list::-webkit-scrollbar {
             width: 4px;
+        }
+        .contacts-list::-webkit-scrollbar-track {
+            background: transparent;
         }
         .contacts-list::-webkit-scrollbar-thumb {
             background: #d1d8e0;
@@ -576,6 +585,7 @@
             cursor: pointer;
             transition: var(--transition);
             border-bottom: 1px solid #f5f6fa;
+            -webkit-tap-highlight-color: transparent;
         }
         .contact-item:hover {
             background: var(--bg);
@@ -609,6 +619,9 @@
         .contact-name {
             font-weight: 600;
             font-size: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .contact-last-msg {
             font-size: 13px;
@@ -667,11 +680,6 @@
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
 
         /* ====== CHAT AREA ====== */
         .chat-area {
@@ -699,11 +707,13 @@
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
+            min-height: 56px;
         }
         .chat-user-info {
             display: flex;
             align-items: center;
             gap: 12px;
+            min-width: 0;
         }
         .chat-avatar {
             width: 40px;
@@ -726,6 +736,10 @@
         .chat-user-name {
             font-weight: 600;
             font-size: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 160px;
         }
         .chat-user-status {
             font-size: 12px;
@@ -738,16 +752,20 @@
         .messages-container {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 14px 16px;
             display: flex;
             flex-direction: column;
             gap: 3px;
             background: #f8f9fa;
-            overscroll-behavior: contain;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
         .messages-container::-webkit-scrollbar {
             width: 4px;
+        }
+        .messages-container::-webkit-scrollbar-track {
+            background: transparent;
         }
         .messages-container::-webkit-scrollbar-thumb {
             background: #d1d8e0;
@@ -873,6 +891,7 @@
             border-top: 1px solid #e9edf2;
             align-items: center;
             flex-shrink: 0;
+            min-height: 56px;
         }
         .message-input-area input {
             flex: 1;
@@ -884,6 +903,7 @@
             transition: var(--transition);
             background: var(--bg);
             font-family: inherit;
+            -webkit-appearance: none;
         }
         .message-input-area input:focus {
             border-color: var(--primary);
@@ -908,6 +928,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
         }
         .send-btn:hover {
             background: var(--primary-dark);
@@ -955,6 +976,7 @@
             padding: 20px;
             animation: fadeIn 0.3s ease;
             backdrop-filter: blur(4px);
+            -webkit-overflow-scrolling: touch;
         }
         .modal.active {
             display: flex;
@@ -967,12 +989,17 @@
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            overflow-x: hidden;
             animation: slideUp 0.3s ease;
             padding: 0;
+            -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
         }
         .modal-content::-webkit-scrollbar {
             width: 4px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
         }
         .modal-content::-webkit-scrollbar-thumb {
             background: #d1d8e0;
@@ -990,6 +1017,7 @@
             background: var(--white);
             z-index: 1;
             border-radius: var(--radius) var(--radius) 0 0;
+            flex-shrink: 0;
         }
         .modal-header h3 {
             font-size: 18px;
@@ -1006,6 +1034,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            -webkit-tap-highlight-color: transparent;
         }
         .close-btn:hover {
             background: var(--danger);
@@ -1070,6 +1099,7 @@
             cursor: pointer;
             transition: var(--transition);
             font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
         }
         .search-result .btn-add:hover {
             background: var(--primary-dark);
@@ -1079,7 +1109,7 @@
             cursor: not-allowed;
         }
 
-        /* Profile Modal */
+        /* ====== PROFILE MODAL ====== */
         .profile-body {
             text-align: center;
         }
@@ -1133,6 +1163,7 @@
             padding: 6px 0;
             border-bottom: 1px solid #f5f6fa;
             font-size: 14px;
+            word-break: break-all;
         }
         .profile-info p strong {
             color: var(--text-light);
@@ -1148,7 +1179,7 @@
             font-size: 16px;
         }
 
-        /* Settings Modal */
+        /* ====== SETTINGS MODAL ====== */
         .settings-item {
             display: flex;
             justify-content: space-between;
@@ -1178,6 +1209,7 @@
             border-radius: 13px;
             cursor: pointer;
             transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
         }
         .toggle-switch.active {
             background: var(--primary);
@@ -1203,7 +1235,7 @@
             font-weight: 600;
         }
 
-        /* File Modal */
+        /* ====== FILE MODAL ====== */
         .file-modal .modal-body {
             text-align: center;
             padding: 10px;
@@ -1215,8 +1247,8 @@
             border-radius: var(--radius-sm);
         }
 
-        /* Security Code Modal */
-        .security-modal .code-display {
+        /* ====== MY CODE MODAL ====== */
+        .mycode-modal .code-display {
             font-size: 32px;
             font-weight: 800;
             color: var(--primary);
@@ -1229,15 +1261,6 @@
             margin: 10px 0;
             user-select: all;
             word-break: break-all;
-        }
-        .security-modal .security-warning {
-            background: #fef9e7;
-            border: 1px solid #f9e79f;
-            padding: 12px;
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-            color: #7d6608;
-            margin: 10px 0;
         }
 
         /* ====== TWO FACTOR PASSWORD ====== */
@@ -1272,44 +1295,67 @@
         @media (max-width: 500px) {
             body {
                 padding: 0;
+                align-items: stretch;
             }
             .container {
                 height: 100vh;
                 max-height: 100vh;
                 border-radius: 0;
+                width: 100%;
+                max-width: 100%;
             }
-            #loginPage {
+            #loginPage .scroll-area {
                 padding: 24px 18px;
             }
             .dashboard-header {
-                padding: 12px 14px;
+                padding: 10px 12px;
+                min-height: 52px;
+            }
+            .user-name {
+                max-width: 80px;
+                font-size: 14px;
             }
             .search-bar {
-                padding: 6px 14px;
+                padding: 6px 12px;
             }
             .contact-item {
-                padding: 10px 14px;
+                padding: 10px 12px;
             }
             .messages-container {
                 padding: 10px 12px;
             }
             .message-input-area {
                 padding: 8px 12px 12px;
+                min-height: 48px;
             }
             .modal-content {
                 margin: 10px;
                 border-radius: var(--radius-sm);
             }
             .code-display-box .code-value {
-                font-size: 24px;
-                letter-spacing: 3px;
-            }
-            .countdown-timer .timer-number {
                 font-size: 22px;
+                letter-spacing: 2px;
             }
             .input-group input.code-input {
                 font-size: 16px;
                 letter-spacing: 2px;
+            }
+            .chat-user-name {
+                max-width: 120px;
+                font-size: 14px;
+            }
+            .icon-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 16px;
+            }
+            .user-avatar {
+                width: 38px;
+                height: 38px;
+                font-size: 15px;
+            }
+            .header-right {
+                gap: 2px;
             }
         }
 
@@ -1321,9 +1367,9 @@
                 font-size: 28px;
             }
             .user-avatar {
-                width: 36px;
-                height: 36px;
-                font-size: 14px;
+                width: 34px;
+                height: 34px;
+                font-size: 13px;
             }
             .contact-avatar {
                 width: 40px;
@@ -1336,7 +1382,37 @@
             }
             .code-display-box .code-value {
                 font-size: 18px;
-                letter-spacing: 2px;
+                letter-spacing: 1px;
+            }
+            .user-name {
+                max-width: 60px;
+                font-size: 13px;
+            }
+            .chat-user-name {
+                max-width: 80px;
+                font-size: 13px;
+            }
+        }
+
+        /* ====== TOUCH FIXES ====== */
+        .no-tap-highlight {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        input,
+        textarea,
+        button {
+            -webkit-appearance: none;
+            border-radius: 0;
+        }
+
+        /* Fix for iOS 15+ */
+        @supports (-webkit-touch-callout: none) {
+            .container {
+                height: -webkit-fill-available;
+            }
+            .modal-content {
+                max-height: -webkit-fill-available;
             }
         }
     </style>
@@ -1345,69 +1421,78 @@
 
     <div class="container" id="app">
 
+        <!-- ====== LOADING OVERLAY ====== -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading...</div>
+        </div>
+
         <!-- ============================================================ -->
         <!-- ====== PAGE: LOGIN ====== -->
         <!-- ============================================================ -->
         <div id="loginPage" class="page active">
-            <div class="logo">
-                <span class="logo-icon">💬</span>
-                <h1>Bubble</h1>
-                <p class="tagline">Private & Secure Messenger</p>
-            </div>
+            <div class="scroll-area">
+                <div class="logo">
+                    <span class="logo-icon">💬</span>
+                    <h1>Bubble</h1>
+                    <p class="tagline">Private & Secure Messenger</p>
+                </div>
 
-            <div class="tab-buttons">
-                <button class="tab-btn active" data-tab="login">Login</button>
-                <button class="tab-btn" data-tab="register">Create Account</button>
-            </div>
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="login">Login</button>
+                    <button class="tab-btn" data-tab="register">Create Account</button>
+                </div>
 
-            <!-- Login Form -->
-            <form id="loginForm" class="form active">
-                <div class="input-group">
-                    <label>🔑 Your User Code</label>
-                    <input type="text" id="loginCode" class="code-input" placeholder="XXXX-XXXX-XXXX" required autocomplete="off" maxlength="15" />
-                </div>
-                <div class="input-group">
-                    <label>🔒 Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password" />
-                </div>
-                <button type="submit" class="btn-primary" id="loginBtn">Login</button>
-                <div id="loginError" class="error-msg hidden"></div>
-                <div id="loginInfo" class="info-msg hidden">💡 Your user code was given when you created your account. Share it with friends to connect!</div>
-            </form>
-
-            <!-- Register Form -->
-            <form id="registerForm" class="form">
-                <div class="input-group">
-                    <label>👤 Your Name</label>
-                    <input type="text" id="regName" placeholder="Enter your full name" required autocomplete="name" />
-                </div>
-                <div class="input-group">
-                    <label>🔑 Your User Code</label>
-                    <input type="text" id="regCode" class="code-input" placeholder="Will be generated for you" readonly style="background:#f0edff;color:var(--primary);font-weight:700;" />
-                </div>
-                <div class="input-group">
-                    <label>🔒 Password</label>
-                    <input type="password" id="regPassword" placeholder="Min 8 characters" required autocomplete="new-password" />
-                </div>
-                <div class="input-group">
-                    <label>🔒 Confirm Password</label>
-                    <input type="password" id="regConfirmPassword" placeholder="Confirm your password" required autocomplete="new-password" />
-                </div>
-                <div class="two-factor-box" id="twoFactorBox">
-                    <span class="tf-label">🔐 Two-Factor Password Check</span>
-                    <div class="tf-hint" id="twoFactorStatus">
-                        <span class="cross">✗</span> Passwords must match
+                <!-- Login Form -->
+                <form id="loginForm" class="form active">
+                    <div class="input-group">
+                        <label>🔑 Your User Code</label>
+                        <input type="text" id="loginCode" class="code-input" placeholder="XXXX-XXXX-XXXX" required autocomplete="off" maxlength="15" />
                     </div>
-                </div>
-                <div class="input-group">
-                    <label>📝 Bio (optional)</label>
-                    <input type="text" id="regBio" placeholder="Tell us about yourself" />
-                </div>
-                <button type="submit" class="btn-primary" id="registerBtn" disabled>Create Account</button>
-                <div id="registerError" class="error-msg hidden"></div>
-            </form>
+                    <div class="input-group">
+                        <label>🔒 Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password" />
+                    </div>
+                    <button type="submit" class="btn-primary" id="loginBtn">Login</button>
+                    <div id="loginError" class="error-msg hidden"></div>
+                    <div id="loginInfo" class="info-msg hidden">💡 Your user code was given when you created your account. Share it with friends to connect!</div>
+                </form>
 
-            <div class="footer-text">🔑 Your user code is like your phone number — share it with friends!</div>
+                <!-- Register Form -->
+                <form id="registerForm" class="form">
+                    <div class="input-group">
+                        <label>👤 Your Name</label>
+                        <input type="text" id="regName" placeholder="Enter your full name" required autocomplete="name" />
+                    </div>
+                    <div class="input-group">
+                        <label>🔑 Your User Code</label>
+                        <input type="text" id="regCode" class="code-input" placeholder="Will be generated for you" readonly style="background:#f0edff;color:var(--primary);font-weight:700;" />
+                    </div>
+                    <div class="input-group">
+                        <label>🔒 Password</label>
+                        <input type="password" id="regPassword" placeholder="Min 8 characters" required autocomplete="new-password" />
+                    </div>
+                    <div class="input-group">
+                        <label>🔒 Confirm Password</label>
+                        <input type="password" id="regConfirmPassword" placeholder="Confirm your password" required autocomplete="new-password" />
+                    </div>
+                    <div class="two-factor-box" id="twoFactorBox">
+                        <span class="tf-label">🔐 Two-Factor Password Check</span>
+                        <div class="tf-hint" id="twoFactorStatus">
+                            <span class="cross">✗</span> Passwords must match (min 8 chars)
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>📝 Bio (optional)</label>
+                        <input type="text" id="regBio" placeholder="Tell us about yourself" />
+                    </div>
+                    <button type="submit" class="btn-primary" id="registerBtn" disabled>Create Account</button>
+                    <div id="registerError" class="error-msg hidden"></div>
+                    <div id="registerSuccess" class="success-msg hidden"></div>
+                </form>
+
+                <div class="footer-text">🔑 Your user code is like your phone number — share it with friends!</div>
+            </div>
         </div>
 
         <!-- ============================================================ -->
@@ -1584,7 +1669,7 @@
                 <div class="settings-item">
                     <div class="settings-label">
                         📱 About
-                        <small>Bubble Messenger v2.0</small>
+                        <small>Bubble Messenger v3.0</small>
                     </div>
                     <div class="settings-action">
                         <span style="color:var(--text-light);font-size:13px;">💬</span>
@@ -1686,56 +1771,142 @@
     <!-- ============================================================ -->
     <script>
         // ================================================================
-        // ====== SECURITY: Hash Function ======
+        // ====== CONFIGURATION ======
         // ================================================================
-        function simpleHash(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash;
-            }
-            return 'h_' + Math.abs(hash).toString(36) + '_' + str.length;
-        }
 
-        // ================================================================
-        // ====== GENERATE USER CODE ======
-        // ================================================================
-        function generateUserCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = '';
-            for (let i = 0; i < 12; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-                if ((i + 1) % 4 === 0 && i < 11) code += '-';
-            }
-            return code;
-        }
+        // 🔥 IMPORTANT: Create a free JSONBin account and get your API key
+        // Go to: https://jsonbin.io
+        // Create a bin and copy the ID and API key below
 
-        function hashCode(code) {
-            return simpleHash('code_' + code.replace(/-/g, ''));
-        }
-
-        function formatCodeDisplay(code) {
-            const clean = code.replace(/-/g, '');
-            let formatted = '';
-            for (let i = 0; i < clean.length; i++) {
-                formatted += clean[i];
-                if ((i + 1) % 4 === 0 && i < 11) formatted += '-';
-            }
-            return formatted;
-        }
-
-        // ====== STORAGE KEYS ======
-        const STORAGE_KEYS = {
-            USERS: 'bubble_users_v5',
-            CONTACTS: 'bubble_contacts_v5',
-            MESSAGES: 'bubble_messages_v5',
-            CURRENT_USER: 'bubble_current_user_v5',
-            SETTINGS: 'bubble_settings_v5'
+        const JSONBIN_CONFIG = {
+            // Your JSONBin API key (get from: https://jsonbin.io/api-keys)
+            API_KEY: 'YOUR_JSONBIN_API_KEY_HERE',
+            // Your bin ID (get from your bin URL: https://api.jsonbin.io/v3/b/XXXXXXXX)
+            BIN_ID: 'YOUR_JSONBIN_BIN_ID_HERE'
         };
 
-        // ====== DATA HELPERS ======
-        function getData(key) {
+        // ================================================================
+        // ====== JSONBin API FUNCTIONS ======
+        // ================================================================
+
+        let dataCache = null;
+        let isSyncing = false;
+
+        async function loadFromCloud() {
+            if (!JSONBIN_CONFIG.API_KEY || JSONBIN_CONFIG.API_KEY === 'YOUR_JSONBIN_API_KEY_HERE') {
+                console.warn('⚠️ JSONBin not configured. Using localStorage only.');
+                return null;
+            }
+
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.BIN_ID}/latest`, {
+                    headers: {
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        // Bin doesn't exist, create it
+                        await createNewBin();
+                        return null;
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                const result = data.record || data;
+                dataCache = result;
+                return result;
+            } catch (error) {
+                console.error('Error loading from cloud:', error);
+                return null;
+            }
+        }
+
+        async function saveToCloud(data) {
+            if (!JSONBIN_CONFIG.API_KEY || JSONBIN_CONFIG.API_KEY === 'YOUR_JSONBIN_API_KEY_HERE') {
+                console.warn('⚠️ JSONBin not configured. Saving to localStorage only.');
+                return false;
+            }
+
+            if (isSyncing) return false;
+            isSyncing = true;
+
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        await createNewBin(data);
+                        isSyncing = false;
+                        return true;
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                dataCache = data;
+                isSyncing = false;
+                return true;
+            } catch (error) {
+                console.error('Error saving to cloud:', error);
+                isSyncing = false;
+                return false;
+            }
+        }
+
+        async function createNewBin(initialData = null) {
+            if (!JSONBIN_CONFIG.API_KEY || JSONBIN_CONFIG.API_KEY === 'YOUR_JSONBIN_API_KEY_HERE') {
+                return;
+            }
+
+            try {
+                const response = await fetch('https://api.jsonbin.io/v3/b', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY
+                    },
+                    body: JSON.stringify(initialData || { users: {}, contacts: {}, messages: {} })
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                const newBinId = data.metadata?.id;
+
+                if (newBinId) {
+                    console.log(`✅ New JSONBin created! ID: ${newBinId}`);
+                    console.log(`📝 Update your config: BIN_ID: '${newBinId}'`);
+                    JSONBIN_CONFIG.BIN_ID = newBinId;
+                    dataCache = data.record || initialData || { users: {}, contacts: {}, messages: {} };
+                }
+            } catch (error) {
+                console.error('Error creating bin:', error);
+            }
+        }
+
+        // ================================================================
+        // ====== STORAGE: Hybrid (Cloud + Local) ======
+        // ================================================================
+
+        const STORAGE_KEYS = {
+            USERS: 'bubble_users_v6',
+            CONTACTS: 'bubble_contacts_v6',
+            MESSAGES: 'bubble_messages_v6',
+            CURRENT_USER: 'bubble_current_user_v6',
+            SETTINGS: 'bubble_settings_v6'
+        };
+
+        // ====== LOCAL STORAGE HELPERS ======
+        function getLocalData(key) {
             try {
                 const raw = localStorage.getItem(key);
                 return raw ? JSON.parse(raw) : {};
@@ -1744,20 +1915,33 @@
             }
         }
 
-        function setData(key, data) {
+        function setLocalData(key, data) {
             localStorage.setItem(key, JSON.stringify(data));
         }
 
+        // ====== HYBRID DATA HELPERS ======
         function getUsers() {
-            return getData(STORAGE_KEYS.USERS);
+            const local = getLocalData(STORAGE_KEYS.USERS);
+            if (dataCache && dataCache.users) {
+                return { ...local, ...dataCache.users };
+            }
+            return local;
         }
 
         function getContacts() {
-            return getData(STORAGE_KEYS.CONTACTS);
+            const local = getLocalData(STORAGE_KEYS.CONTACTS);
+            if (dataCache && dataCache.contacts) {
+                return { ...local, ...dataCache.contacts };
+            }
+            return local;
         }
 
         function getMessages() {
-            return getData(STORAGE_KEYS.MESSAGES);
+            const local = getLocalData(STORAGE_KEYS.MESSAGES);
+            if (dataCache && dataCache.messages) {
+                return { ...local, ...dataCache.messages };
+            }
+            return local;
         }
 
         function getCurrentUser() {
@@ -1773,11 +1957,75 @@
         }
 
         function getSettings() {
-            return getData(STORAGE_KEYS.SETTINGS);
+            return getLocalData(STORAGE_KEYS.SETTINGS);
         }
 
         function setSettings(settings) {
-            setData(STORAGE_KEYS.SETTINGS, settings);
+            setLocalData(STORAGE_KEYS.SETTINGS, settings);
+        }
+
+        // ====== SYNC FUNCTIONS ======
+        async function syncToCloud() {
+            const data = {
+                users: getLocalData(STORAGE_KEYS.USERS),
+                contacts: getLocalData(STORAGE_KEYS.CONTACTS),
+                messages: getLocalData(STORAGE_KEYS.MESSAGES)
+            };
+            await saveToCloud(data);
+        }
+
+        async function syncFromCloud() {
+            const cloudData = await loadFromCloud();
+            if (cloudData) {
+                if (cloudData.users) {
+                    const localUsers = getLocalData(STORAGE_KEYS.USERS);
+                    setLocalData(STORAGE_KEYS.USERS, { ...localUsers, ...cloudData.users });
+                }
+                if (cloudData.contacts) {
+                    const localContacts = getLocalData(STORAGE_KEYS.CONTACTS);
+                    setLocalData(STORAGE_KEYS.CONTACTS, { ...localContacts, ...cloudData.contacts });
+                }
+                if (cloudData.messages) {
+                    const localMessages = getLocalData(STORAGE_KEYS.MESSAGES);
+                    setLocalData(STORAGE_KEYS.MESSAGES, { ...localMessages, ...cloudData.messages });
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // ================================================================
+        // ====== SECURITY HELPERS ======
+        // ================================================================
+
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return 'h_' + Math.abs(hash).toString(36) + '_' + str.length;
+        }
+
+        function generateUserCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 12; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+                if ((i + 1) % 4 === 0 && i < 11) code += '-';
+            }
+            return code;
+        }
+
+        function formatCodeDisplay(code) {
+            const clean = code.replace(/-/g, '');
+            let formatted = '';
+            for (let i = 0; i < clean.length; i++) {
+                formatted += clean[i];
+                if ((i + 1) % 4 === 0 && i < 11) formatted += '-';
+            }
+            return formatted;
         }
 
         function generateId() {
@@ -1838,10 +2086,12 @@
             return 'file';
         }
 
-        // ====== DOM ELEMENTS ======
+        // ================================================================
+        // ====== DOM HELPERS ======
+        // ================================================================
+
         const $ = id => document.getElementById(id);
 
-        // ====== UI HELPERS ======
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             $(pageId).classList.add('active');
@@ -1849,10 +2099,12 @@
 
         function showModal(id) {
             $(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal(id) {
             $(id).classList.remove('active');
+            document.body.style.overflow = '';
         }
 
         function showError(el, msg) {
@@ -1867,32 +2119,19 @@
             setTimeout(() => el.classList.add('hidden'), 4000);
         }
 
-        function showInfo(el, msg) {
-            el.textContent = msg;
-            el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 8000);
+        function showLoading(show) {
+            const overlay = $('loadingOverlay');
+            if (show) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
         }
 
-        // ====== AUTH ======
-        // Tab switching
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const tab = this.dataset.tab;
-                document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
-                $(tab + 'Form').classList.add('active');
-                document.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
-                document.querySelectorAll('.info-msg').forEach(el => el.classList.add('hidden'));
-
-                // Generate code when switching to register
-                if (tab === 'register') {
-                    generateCodeForRegister();
-                }
-            });
-        });
-
+        // ================================================================
         // ====== TWO-FACTOR PASSWORD CHECK ======
+        // ================================================================
+
         let passwordValid = false;
 
         function checkTwoFactor() {
@@ -1926,18 +2165,42 @@
         $('regPassword').addEventListener('input', checkTwoFactor);
         $('regConfirmPassword').addEventListener('input', checkTwoFactor);
 
+        // ================================================================
         // ====== GENERATE CODE FOR REGISTER ======
+        // ================================================================
+
         function generateCodeForRegister() {
             const code = generateUserCode();
             $('regCode').value = code;
             window._pendingUserCode = code;
         }
-
-        // Generate on page load for register tab
         generateCodeForRegister();
 
+        // ================================================================
+        // ====== TAB SWITCHING ======
+        // ================================================================
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const tab = this.dataset.tab;
+                document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+                $(tab + 'Form').classList.add('active');
+                document.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.info-msg').forEach(el => el.classList.add('hidden'));
+
+                if (tab === 'register') {
+                    generateCodeForRegister();
+                }
+            });
+        });
+
+        // ================================================================
         // ====== REGISTER ======
-        $('registerForm').addEventListener('submit', function(e) {
+        // ================================================================
+
+        $('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const name = $('regName').value.trim();
@@ -1960,50 +2223,72 @@
                 return;
             }
 
-            const users = getUsers();
+            showLoading(true);
 
-            // Check if code exists (unique)
-            const cleanCode = code.replace(/-/g, '');
-            for (let id in users) {
-                if (users[id].code === cleanCode) {
-                    showError($('registerError'), 'This code is already taken! Please refresh.');
-                    generateCodeForRegister();
-                    return;
+            try {
+                await syncFromCloud();
+
+                const users = getUsers();
+                const cleanCode = code.replace(/-/g, '');
+
+                // Check if code exists
+                for (let id in users) {
+                    if (users[id].code === cleanCode) {
+                        showError($('registerError'), 'This code is already taken! Please refresh.');
+                        generateCodeForRegister();
+                        showLoading(false);
+                        return;
+                    }
                 }
+
+                const userId = generateId();
+                const hashedPassword = simpleHash(password);
+
+                users[userId] = {
+                    id: userId,
+                    name: name,
+                    code: cleanCode,
+                    password: hashedPassword,
+                    bio: bio || '',
+                    avatar: 'default',
+                    status: 'online',
+                    createdAt: Date.now(),
+                    lastSeen: Date.now()
+                };
+
+                // Save locally
+                const localUsers = getLocalData(STORAGE_KEYS.USERS);
+                localUsers[userId] = users[userId];
+                setLocalData(STORAGE_KEYS.USERS, localUsers);
+
+                // Sync to cloud
+                await syncToCloud();
+
+                showSuccess($('registerSuccess'), '✅ Account created! Welcome to Bubble!');
+                $('registerBtn').disabled = true;
+
+                // Auto-login
+                window.currentUserId = userId;
+                window.currentUserData = users[userId];
+                setCurrentUser(userId);
+
+                setTimeout(() => {
+                    showLoading(false);
+                    initDashboard();
+                }, 800);
+
+            } catch (error) {
+                console.error('Register error:', error);
+                showError($('registerError'), 'Error creating account. Please try again.');
+                showLoading(false);
             }
-
-            const userId = generateId();
-            const hashedPassword = simpleHash(password);
-
-            users[userId] = {
-                id: userId,
-                name: name,
-                code: cleanCode,
-                password: hashedPassword,
-                bio: bio || '',
-                avatar: 'default',
-                status: 'online',
-                createdAt: Date.now(),
-                lastSeen: Date.now()
-            };
-
-            setData(STORAGE_KEYS.USERS, users);
-
-            // Auto-login
-            window.currentUserId = userId;
-            window.currentUserData = users[userId];
-            setCurrentUser(userId);
-
-            showSuccess($('registerError'), '✅ Account created! Welcome to Bubble!');
-            $('registerBtn').disabled = true;
-
-            setTimeout(() => {
-                initDashboard();
-            }, 500);
         });
 
+        // ================================================================
         // ====== LOGIN ======
-        $('loginForm').addEventListener('submit', function(e) {
+        // ================================================================
+
+        $('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const code = $('loginCode').value.trim().toUpperCase();
@@ -2020,49 +2305,69 @@
                 return;
             }
 
-            const users = getUsers();
-            let foundUser = null;
-            let foundId = null;
+            showLoading(true);
 
-            for (let id in users) {
-                if (users[id].code === cleanCode) {
-                    foundUser = users[id];
-                    foundId = id;
-                    break;
+            try {
+                await syncFromCloud();
+
+                const users = getUsers();
+                let foundUser = null;
+                let foundId = null;
+
+                for (let id in users) {
+                    if (users[id].code === cleanCode) {
+                        foundUser = users[id];
+                        foundId = id;
+                        break;
+                    }
                 }
+
+                if (!foundUser) {
+                    showError($('loginError'), 'User not found');
+                    showLoading(false);
+                    return;
+                }
+
+                if (simpleHash(password) !== foundUser.password) {
+                    showError($('loginError'), 'Invalid password');
+                    showLoading(false);
+                    return;
+                }
+
+                // Update status
+                foundUser.status = 'online';
+                foundUser.lastSeen = Date.now();
+
+                const localUsers = getLocalData(STORAGE_KEYS.USERS);
+                localUsers[foundId] = foundUser;
+                setLocalData(STORAGE_KEYS.USERS, localUsers);
+                await syncToCloud();
+
+                window.currentUserId = foundId;
+                window.currentUserData = foundUser;
+                setCurrentUser(foundId);
+
+                showLoading(false);
+                initDashboard();
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showError($('loginError'), 'Error logging in. Please try again.');
+                showLoading(false);
             }
-
-            if (!foundUser) {
-                showError($('loginError'), 'User not found');
-                return;
-            }
-
-            // Check password
-            if (simpleHash(password) !== foundUser.password) {
-                showError($('loginError'), 'Invalid password');
-                return;
-            }
-
-            // Success
-            foundUser.status = 'online';
-            foundUser.lastSeen = Date.now();
-            users[foundId] = foundUser;
-            setData(STORAGE_KEYS.USERS, users);
-
-            window.currentUserId = foundId;
-            window.currentUserData = foundUser;
-            setCurrentUser(foundId);
-
-            initDashboard();
         });
 
+        // ================================================================
         // ====== DASHBOARD ======
+        // ================================================================
+
         function initDashboard() {
             showPage('dashboardPage');
             $('dashUserName').textContent = window.currentUserData.name;
             updateAvatar('dashAvatar', window.currentUserData.avatar);
             loadContacts();
             loadSettings();
+            startPolling();
         }
 
         function updateAvatar(elementId, avatarData) {
@@ -2078,7 +2383,41 @@
             }
         }
 
+        // ================================================================
+        // ====== POLLING ======
+        // ================================================================
+
+        let pollingInterval = null;
+
+        function startPolling() {
+            if (pollingInterval) clearInterval(pollingInterval);
+            pollingInterval = setInterval(async () => {
+                if (document.getElementById('dashboardPage').classList.contains('active')) {
+                    await syncFromCloud();
+                    if (!document.getElementById('chatArea').classList.contains('active')) {
+                        loadContacts();
+                    } else {
+                        loadContacts();
+                        const contactId = window.selectedContact;
+                        if (contactId) {
+                            loadMessages(contactId);
+                        }
+                    }
+                }
+            }, 5000);
+        }
+
+        function stopPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+        }
+
+        // ================================================================
         // ====== SETTINGS ======
+        // ================================================================
+
         function loadSettings() {
             const settings = getSettings();
             if (settings.notifications !== undefined) {
@@ -2121,7 +2460,10 @@
             showModal('settingsModal');
         }
 
+        // ================================================================
         // ====== MY CODE ======
+        // ================================================================
+
         function showMyCode() {
             closeModal('settingsModal');
             const user = window.currentUserData;
@@ -2154,7 +2496,10 @@
             });
         }
 
+        // ================================================================
         // ====== CHANGE NAME ======
+        // ================================================================
+
         function changeName() {
             closeModal('settingsModal');
             setTimeout(() => {
@@ -2164,25 +2509,45 @@
             }, 300);
         }
 
-        function saveName() {
+        async function saveName() {
             const newName = $('newName').value.trim();
             if (!newName || newName.length < 2) {
                 showError($('nameError'), 'Name must be at least 2 characters');
                 return;
             }
 
-            const users = getUsers();
-            const userId = window.currentUserId;
-            users[userId].name = newName;
-            setData(STORAGE_KEYS.USERS, users);
-            window.currentUserData = users[userId];
+            showLoading(true);
 
-            $('dashUserName').textContent = newName;
-            closeModal('changeNameModal');
-            openProfile();
+            try {
+                await syncFromCloud();
+
+                const users = getUsers();
+                const userId = window.currentUserId;
+                users[userId].name = newName;
+
+                const localUsers = getLocalData(STORAGE_KEYS.USERS);
+                localUsers[userId] = users[userId];
+                setLocalData(STORAGE_KEYS.USERS, localUsers);
+                await syncToCloud();
+
+                window.currentUserData = users[userId];
+                $('dashUserName').textContent = newName;
+
+                closeModal('changeNameModal');
+                showLoading(false);
+                openProfile();
+
+            } catch (error) {
+                console.error('Error saving name:', error);
+                showError($('nameError'), 'Error saving name. Please try again.');
+                showLoading(false);
+            }
         }
 
+        // ================================================================
         // ====== CHANGE PASSWORD ======
+        // ================================================================
+
         function changePassword() {
             closeModal('settingsModal');
             setTimeout(() => {
@@ -2194,79 +2559,119 @@
             }, 300);
         }
 
-        function savePassword() {
+        async function savePassword() {
             const oldPassword = $('oldPassword').value;
             const newPassword = $('newPassword').value;
             const confirmPassword = $('confirmNewPassword').value;
 
-            const users = getUsers();
-            const userId = window.currentUserId;
-            const user = users[userId];
+            showLoading(true);
 
-            if (simpleHash(oldPassword) !== user.password) {
-                showError($('passwordError'), 'Current password is incorrect');
-                return;
+            try {
+                await syncFromCloud();
+
+                const users = getUsers();
+                const userId = window.currentUserId;
+                const user = users[userId];
+
+                if (simpleHash(oldPassword) !== user.password) {
+                    showError($('passwordError'), 'Current password is incorrect');
+                    showLoading(false);
+                    return;
+                }
+
+                if (newPassword.length < 8) {
+                    showError($('passwordError'), 'New password must be at least 8 characters');
+                    showLoading(false);
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    showError($('passwordError'), 'Passwords do not match');
+                    showLoading(false);
+                    return;
+                }
+
+                user.password = simpleHash(newPassword);
+
+                const localUsers = getLocalData(STORAGE_KEYS.USERS);
+                localUsers[userId] = user;
+                setLocalData(STORAGE_KEYS.USERS, localUsers);
+                await syncToCloud();
+
+                closeModal('changePasswordModal');
+                showLoading(false);
+                alert('✅ Password changed successfully!');
+
+            } catch (error) {
+                console.error('Error saving password:', error);
+                showError($('passwordError'), 'Error saving password. Please try again.');
+                showLoading(false);
             }
-
-            if (newPassword.length < 8) {
-                showError($('passwordError'), 'New password must be at least 8 characters');
-                return;
-            }
-
-            if (newPassword !== confirmPassword) {
-                showError($('passwordError'), 'Passwords do not match');
-                return;
-            }
-
-            user.password = simpleHash(newPassword);
-            setData(STORAGE_KEYS.USERS, users);
-
-            closeModal('changePasswordModal');
-            alert('✅ Password changed successfully!');
         }
 
+        // ================================================================
         // ====== DELETE ACCOUNT ======
-        function deleteAccount() {
+        // ================================================================
+
+        async function deleteAccount() {
             if (!confirm('⚠️ Are you sure you want to delete your account? This cannot be undone!')) return;
             if (!confirm('All your messages and contacts will be permanently deleted. Are you sure?')) return;
 
-            const users = getUsers();
-            const contacts = getContacts();
-            const messages = getMessages();
-            const userId = window.currentUserId;
+            showLoading(true);
 
-            delete users[userId];
+            try {
+                await syncFromCloud();
 
-            for (let id in contacts) {
-                contacts[id] = contacts[id].filter(c => c !== userId);
-                if (contacts[id].length === 0) {
-                    delete contacts[id];
+                const users = getUsers();
+                const contacts = getContacts();
+                const messages = getMessages();
+                const userId = window.currentUserId;
+
+                delete users[userId];
+
+                for (let id in contacts) {
+                    contacts[id] = contacts[id].filter(c => c !== userId);
+                    if (contacts[id].length === 0) {
+                        delete contacts[id];
+                    }
                 }
-            }
 
-            for (let id in messages) {
-                const msg = messages[id];
-                if (msg.senderId === userId || msg.receiverId === userId) {
-                    delete messages[id];
+                for (let id in messages) {
+                    const msg = messages[id];
+                    if (msg.senderId === userId || msg.receiverId === userId) {
+                        delete messages[id];
+                    }
                 }
+
+                setLocalData(STORAGE_KEYS.USERS, users);
+                setLocalData(STORAGE_KEYS.CONTACTS, contacts);
+                setLocalData(STORAGE_KEYS.MESSAGES, messages);
+                await syncToCloud();
+
+                setCurrentUser(null);
+                window.currentUserId = null;
+                window.currentUserData = null;
+                window.selectedContact = null;
+
+                closeModal('settingsModal');
+                showLoading(false);
+                showPage('loginPage');
+                alert('Account deleted successfully.');
+
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                alert('Error deleting account. Please try again.');
+                showLoading(false);
             }
-
-            setData(STORAGE_KEYS.USERS, users);
-            setData(STORAGE_KEYS.CONTACTS, contacts);
-            setData(STORAGE_KEYS.MESSAGES, messages);
-
-            setCurrentUser(null);
-            window.currentUserId = null;
-            window.currentUserData = null;
-            window.selectedContact = null;
-
-            closeModal('settingsModal');
-            showPage('loginPage');
-            alert('Account deleted successfully.');
         }
 
+        // ================================================================
         // ====== CONTACTS ======
-        function loadContacts() {
+        // ================================================================
+
+        async function loadContacts() {
+            await syncFromCloud();
+
             const contacts = getContacts();
             const userId = window.currentUserId;
             const userContacts = contacts[userId] || [];
@@ -2406,7 +2811,10 @@
             return count;
         }
 
+        // ================================================================
         // ====== SEARCH ======
+        // ================================================================
+
         function searchContacts(query) {
             const items = document.querySelectorAll('.contact-item');
             const q = query.toLowerCase().trim();
@@ -2416,7 +2824,10 @@
             });
         }
 
+        // ================================================================
         // ====== ADD CONTACT ======
+        // ================================================================
+
         function openAddContact() {
             $('contactCode').value = '';
             $('contactSearchResult').classList.remove('show');
@@ -2425,79 +2836,111 @@
             showModal('addContactModal');
         }
 
-        function searchAndAddContact() {
+        async function searchAndAddContact() {
             const code = $('contactCode').value.trim().toUpperCase();
             const cleanCode = code.replace(/-/g, '');
 
             if (!cleanCode || cleanCode.length !== 12 || !cleanCode.match(/^[A-Z0-9]+$/)) {
-                showError($('contactError'), 'Please enter a valid user code (e.g., ABCD-1234-EFGH)');
+                showError($('contactError'), 'Please enter a valid user code');
                 return;
             }
 
-            const users = getUsers();
-            let foundUser = null;
-            let foundId = null;
+            showLoading(true);
 
-            for (let id in users) {
-                if (users[id].code === cleanCode && id !== window.currentUserId) {
-                    foundUser = users[id];
-                    foundId = id;
-                    break;
+            try {
+                await syncFromCloud();
+
+                const users = getUsers();
+                let foundUser = null;
+                let foundId = null;
+
+                for (let id in users) {
+                    if (users[id].code === cleanCode && id !== window.currentUserId) {
+                        foundUser = users[id];
+                        foundId = id;
+                        break;
+                    }
                 }
-            }
 
-            if (!foundUser) {
+                if (!foundUser) {
+                    $('contactSearchResult').innerHTML = `
+                        <div style="color:#e74c3c;padding:10px;">❌ User not found</div>
+                    `;
+                    $('contactSearchResult').classList.add('show');
+                    showLoading(false);
+                    return;
+                }
+
+                const contacts = getContacts();
+                const userContacts = contacts[window.currentUserId] || [];
+                const isContact = userContacts.includes(foundId);
+
+                const color = getColor(foundUser.name || foundId);
+                const avatarContent = foundUser.avatar && foundUser.avatar !== 'default' ?
+                    `<img src="${foundUser.avatar}" alt="avatar" />` :
+                    getInitials(foundUser.name);
+
+                const displayCode = formatCodeDisplay(foundUser.code);
+
                 $('contactSearchResult').innerHTML = `
-                    <div style="color:#e74c3c;padding:10px;">❌ User not found</div>
+                    <div class="result-avatar" style="background:${color}">${avatarContent}</div>
+                    <div class="result-info">
+                        <div class="result-name">${escapeHtml(foundUser.name)}</div>
+                        <div class="result-code">🔑 ${displayCode}</div>
+                    </div>
+                    ${isContact ? 
+                        '<span style="color:#2ecc71;font-weight:600;">✅ Already added</span>' :
+                        `<button class="btn-add" onclick="addContact('${foundId}')">Add</button>`
+                    }
                 `;
                 $('contactSearchResult').classList.add('show');
-                return;
+                $('contactError').classList.add('hidden');
+                showLoading(false);
+
+            } catch (error) {
+                console.error('Error searching contact:', error);
+                showError($('contactError'), 'Error searching. Please try again.');
+                showLoading(false);
             }
+        }
 
-            const contacts = getContacts();
-            const userContacts = contacts[window.currentUserId] || [];
-            const isContact = userContacts.includes(foundId);
+        async function addContact(contactId) {
+            showLoading(true);
 
-            const color = getColor(foundUser.name || foundId);
-            const avatarContent = foundUser.avatar && foundUser.avatar !== 'default' ?
-                `<img src="${foundUser.avatar}" alt="avatar" />` :
-                getInitials(foundUser.name);
+            try {
+                await syncFromCloud();
 
-            const displayCode = formatCodeDisplay(foundUser.code);
+                const contacts = getContacts();
+                const userId = window.currentUserId;
 
-            $('contactSearchResult').innerHTML = `
-                <div class="result-avatar" style="background:${color}">${avatarContent}</div>
-                <div class="result-info">
-                    <div class="result-name">${escapeHtml(foundUser.name)}</div>
-                    <div class="result-code">🔑 ${displayCode}</div>
-                </div>
-                ${isContact ? 
-                    '<span style="color:#2ecc71;font-weight:600;">✅ Already added</span>' :
-                    `<button class="btn-add" onclick="addContact('${foundId}')">Add</button>`
+                if (!contacts[userId]) {
+                    contacts[userId] = [];
                 }
-            `;
-            $('contactSearchResult').classList.add('show');
-            $('contactError').classList.add('hidden');
+
+                if (!contacts[userId].includes(contactId)) {
+                    contacts[userId].push(contactId);
+
+                    const localContacts = getLocalData(STORAGE_KEYS.CONTACTS);
+                    localContacts[userId] = contacts[userId];
+                    setLocalData(STORAGE_KEYS.CONTACTS, localContacts);
+                    await syncToCloud();
+                }
+
+                closeModal('addContactModal');
+                showLoading(false);
+                loadContacts();
+
+            } catch (error) {
+                console.error('Error adding contact:', error);
+                showError($('contactError'), 'Error adding contact. Please try again.');
+                showLoading(false);
+            }
         }
 
-        function addContact(contactId) {
-            const contacts = getContacts();
-            const userId = window.currentUserId;
-
-            if (!contacts[userId]) {
-                contacts[userId] = [];
-            }
-
-            if (!contacts[userId].includes(contactId)) {
-                contacts[userId].push(contactId);
-                setData(STORAGE_KEYS.CONTACTS, contacts);
-            }
-
-            closeModal('addContactModal');
-            loadContacts();
-        }
-
+        // ================================================================
         // ====== CHAT ======
+        // ================================================================
+
         function openChat(contactId) {
             window.selectedContact = contactId;
             const users = getUsers();
@@ -2539,7 +2982,10 @@
             $('messageInput').value = '';
         }
 
+        // ================================================================
         // ====== MESSAGES ======
+        // ================================================================
+
         function loadMessages(contactId) {
             const container = $('messagesContainer');
             const messages = getMessages();
@@ -2664,7 +3110,7 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        function markAsRead(contactId) {
+        async function markAsRead(contactId) {
             const messages = getMessages();
             const userId = window.currentUserId;
             let updated = false;
@@ -2680,12 +3126,20 @@
             }
 
             if (updated) {
-                setData(STORAGE_KEYS.MESSAGES, messages);
+                const localMessages = getLocalData(STORAGE_KEYS.MESSAGES);
+                for (let key in messages) {
+                    localMessages[key] = messages[key];
+                }
+                setLocalData(STORAGE_KEYS.MESSAGES, localMessages);
+                await syncToCloud();
             }
         }
 
+        // ================================================================
         // ====== SEND MESSAGE ======
-        function sendMessage() {
+        // ================================================================
+
+        async function sendMessage() {
             if (!window.selectedContact) return;
 
             const input = $('messageInput');
@@ -2696,27 +3150,41 @@
             input.value = '';
             input.focus();
 
-            const messages = getMessages();
-            const msgId = generateId();
+            try {
+                await syncFromCloud();
 
-            messages[msgId] = {
-                id: msgId,
-                senderId: window.currentUserId,
-                receiverId: window.selectedContact,
-                message: text,
-                fileType: 'none',
-                filePath: '',
-                isRead: false,
-                timestamp: Date.now()
-            };
+                const messages = getMessages();
+                const msgId = generateId();
 
-            setData(STORAGE_KEYS.MESSAGES, messages);
+                messages[msgId] = {
+                    id: msgId,
+                    senderId: window.currentUserId,
+                    receiverId: window.selectedContact,
+                    message: text,
+                    fileType: 'none',
+                    filePath: '',
+                    isRead: false,
+                    timestamp: Date.now()
+                };
 
-            loadMessages(window.selectedContact);
-            loadLastMessage(window.selectedContact);
+                const localMessages = getLocalData(STORAGE_KEYS.MESSAGES);
+                localMessages[msgId] = messages[msgId];
+                setLocalData(STORAGE_KEYS.MESSAGES, localMessages);
+                await syncToCloud();
+
+                loadMessages(window.selectedContact);
+                loadLastMessage(window.selectedContact);
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message. Please try again.');
+            }
         }
 
+        // ================================================================
         // ====== FILE UPLOAD ======
+        // ================================================================
+
         function attachFile() {
             if (!window.selectedContact) return;
 
@@ -2724,7 +3192,7 @@
             input.type = 'file';
             input.accept = 'image/*,video/*,audio/*';
             input.multiple = false;
-            input.onchange = function(e) {
+            input.onchange = async function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
 
@@ -2736,27 +3204,38 @@
                 const fileType = getFileType(file.type);
                 const reader = new FileReader();
 
-                reader.onload = function(event) {
+                reader.onload = async function(event) {
                     const fileData = event.target.result;
 
-                    const messages = getMessages();
-                    const msgId = generateId();
+                    try {
+                        await syncFromCloud();
 
-                    messages[msgId] = {
-                        id: msgId,
-                        senderId: window.currentUserId,
-                        receiverId: window.selectedContact,
-                        message: file.name,
-                        fileType: fileType,
-                        filePath: fileData,
-                        isRead: false,
-                        timestamp: Date.now()
-                    };
+                        const messages = getMessages();
+                        const msgId = generateId();
 
-                    setData(STORAGE_KEYS.MESSAGES, messages);
+                        messages[msgId] = {
+                            id: msgId,
+                            senderId: window.currentUserId,
+                            receiverId: window.selectedContact,
+                            message: file.name,
+                            fileType: fileType,
+                            filePath: fileData,
+                            isRead: false,
+                            timestamp: Date.now()
+                        };
 
-                    loadMessages(window.selectedContact);
-                    loadLastMessage(window.selectedContact);
+                        const localMessages = getLocalData(STORAGE_KEYS.MESSAGES);
+                        localMessages[msgId] = messages[msgId];
+                        setLocalData(STORAGE_KEYS.MESSAGES, localMessages);
+                        await syncToCloud();
+
+                        loadMessages(window.selectedContact);
+                        loadLastMessage(window.selectedContact);
+
+                    } catch (error) {
+                        console.error('Error uploading file:', error);
+                        alert('Failed to upload file. Please try again.');
+                    }
                 };
 
                 reader.readAsDataURL(file);
@@ -2764,7 +3243,10 @@
             input.click();
         }
 
+        // ================================================================
         // ====== VOICE RECORDING ======
+        // ================================================================
+
         let isRecording = false;
         let mediaRecorder = null;
         let audioChunks = [];
@@ -2814,36 +3296,50 @@
             }
         }
 
-        function sendVoiceMessage(audioBlob) {
+        async function sendVoiceMessage(audioBlob) {
             if (!window.selectedContact) return;
 
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = async function(event) {
                 const fileData = event.target.result;
 
-                const messages = getMessages();
-                const msgId = generateId();
+                try {
+                    await syncFromCloud();
 
-                messages[msgId] = {
-                    id: msgId,
-                    senderId: window.currentUserId,
-                    receiverId: window.selectedContact,
-                    message: '🎤 Voice message',
-                    fileType: 'audio',
-                    filePath: fileData,
-                    isRead: false,
-                    timestamp: Date.now()
-                };
+                    const messages = getMessages();
+                    const msgId = generateId();
 
-                setData(STORAGE_KEYS.MESSAGES, messages);
+                    messages[msgId] = {
+                        id: msgId,
+                        senderId: window.currentUserId,
+                        receiverId: window.selectedContact,
+                        message: '🎤 Voice message',
+                        fileType: 'audio',
+                        filePath: fileData,
+                        isRead: false,
+                        timestamp: Date.now()
+                    };
 
-                loadMessages(window.selectedContact);
-                loadLastMessage(window.selectedContact);
+                    const localMessages = getLocalData(STORAGE_KEYS.MESSAGES);
+                    localMessages[msgId] = messages[msgId];
+                    setLocalData(STORAGE_KEYS.MESSAGES, localMessages);
+                    await syncToCloud();
+
+                    loadMessages(window.selectedContact);
+                    loadLastMessage(window.selectedContact);
+
+                } catch (error) {
+                    console.error('Error sending voice:', error);
+                    alert('Failed to send voice message. Please try again.');
+                }
             };
             reader.readAsDataURL(audioBlob);
         }
 
+        // ================================================================
         // ====== VIEW FILE ======
+        // ================================================================
+
         function viewFile(url, title) {
             $('fileModalTitle').textContent = title || 'File';
             const body = $('fileModalBody');
@@ -2861,7 +3357,10 @@
             showModal('fileModal');
         }
 
+        // ================================================================
         // ====== PROFILE ======
+        // ================================================================
+
         function openProfile() {
             const user = window.currentUserData;
             if (!user) return;
@@ -2883,7 +3382,7 @@
             showModal('profileModal');
         }
 
-        function uploadAvatar(event) {
+        async function uploadAvatar(event) {
             const file = event.target.files[0];
             if (!file) return;
 
@@ -2897,81 +3396,138 @@
                 return;
             }
 
+            showLoading(true);
+
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const users = getUsers();
-                const userId = window.currentUserId;
+            reader.onload = async function(e) {
+                try {
+                    await syncFromCloud();
 
-                if (users[userId]) {
-                    users[userId].avatar = e.target.result;
-                    setData(STORAGE_KEYS.USERS, users);
+                    const users = getUsers();
+                    const userId = window.currentUserId;
 
-                    window.currentUserData = users[userId];
-                    updateAvatar('dashAvatar', e.target.result);
+                    if (users[userId]) {
+                        users[userId].avatar = e.target.result;
 
-                    const profileAvatar = $('profileAvatar');
-                    profileAvatar.innerHTML =
-                        `<img src="${e.target.result}" alt="avatar" /><div class="avatar-overlay">Change Photo</div>`;
+                        const localUsers = getLocalData(STORAGE_KEYS.USERS);
+                        localUsers[userId] = users[userId];
+                        setLocalData(STORAGE_KEYS.USERS, localUsers);
+                        await syncToCloud();
 
-                    alert('Avatar updated successfully!');
+                        window.currentUserData = users[userId];
+                        updateAvatar('dashAvatar', e.target.result);
+
+                        const profileAvatar = $('profileAvatar');
+                        profileAvatar.innerHTML =
+                            `<img src="${e.target.result}" alt="avatar" /><div class="avatar-overlay">Change Photo</div>`;
+
+                        showLoading(false);
+                        alert('Avatar updated successfully!');
+                    }
+                } catch (error) {
+                    console.error('Error uploading avatar:', error);
+                    alert('Failed to upload avatar. Please try again.');
+                    showLoading(false);
                 }
             };
             reader.readAsDataURL(file);
         }
 
+        // ================================================================
         // ====== LOGOUT ======
-        function logout() {
+        // ================================================================
+
+        async function logout() {
             if (!confirm('Are you sure you want to sign out?')) return;
 
-            const users = getUsers();
-            const userId = window.currentUserId;
+            showLoading(true);
 
-            if (users[userId]) {
-                users[userId].status = 'offline';
-                users[userId].lastSeen = Date.now();
-                setData(STORAGE_KEYS.USERS, users);
-            }
+            try {
+                await syncFromCloud();
 
-            setCurrentUser(null);
-            window.currentUserId = null;
-            window.currentUserData = null;
-            window.selectedContact = null;
-
-            showPage('loginPage');
-            $('loginForm').reset();
-            $('loginBtn').disabled = false;
-            $('loginBtn').textContent = 'Login';
-        }
-
-        // ====== CHECK SESSION ======
-        function checkSession() {
-            const userId = getCurrentUser();
-
-            if (userId) {
                 const users = getUsers();
-                const user = users[userId];
+                const userId = window.currentUserId;
 
-                if (user) {
-                    window.currentUserId = userId;
-                    window.currentUserData = user;
+                if (users[userId]) {
+                    users[userId].status = 'offline';
+                    users[userId].lastSeen = Date.now();
 
-                    user.status = 'online';
-                    user.lastSeen = Date.now();
-                    users[userId] = user;
-                    setData(STORAGE_KEYS.USERS, users);
-
-                    initDashboard();
-                    return;
+                    const localUsers = getLocalData(STORAGE_KEYS.USERS);
+                    localUsers[userId] = users[userId];
+                    setLocalData(STORAGE_KEYS.USERS, localUsers);
+                    await syncToCloud();
                 }
-            }
 
-            showPage('loginPage');
-            const info = document.getElementById('loginInfo');
-            info.textContent = '💡 Your user code was given when you created your account. Share it with friends to connect!';
-            info.classList.remove('hidden');
+                stopPolling();
+                setCurrentUser(null);
+                window.currentUserId = null;
+                window.currentUserData = null;
+                window.selectedContact = null;
+
+                showLoading(false);
+                showPage('loginPage');
+                $('loginForm').reset();
+                $('loginBtn').disabled = false;
+                $('loginBtn').textContent = 'Login';
+
+            } catch (error) {
+                console.error('Error logging out:', error);
+                showLoading(false);
+                alert('Error logging out. Please try again.');
+            }
         }
 
-        // ====== Handle Enter key ======
+        // ================================================================
+        // ====== CHECK SESSION ======
+        // ================================================================
+
+        async function checkSession() {
+            showLoading(true);
+
+            try {
+                await syncFromCloud();
+
+                const userId = getCurrentUser();
+
+                if (userId) {
+                    const users = getUsers();
+                    const user = users[userId];
+
+                    if (user) {
+                        window.currentUserId = userId;
+                        window.currentUserData = user;
+
+                        user.status = 'online';
+                        user.lastSeen = Date.now();
+
+                        const localUsers = getLocalData(STORAGE_KEYS.USERS);
+                        localUsers[userId] = user;
+                        setLocalData(STORAGE_KEYS.USERS, localUsers);
+                        await syncToCloud();
+
+                        showLoading(false);
+                        initDashboard();
+                        return;
+                    }
+                }
+
+                showLoading(false);
+                showPage('loginPage');
+                const info = document.getElementById('loginInfo');
+                info.textContent = '💡 Your user code was given when you created your account. Share it with friends to connect!';
+                info.classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error checking session:', error);
+                showLoading(false);
+                showPage('loginPage');
+            }
+        }
+
+        // ================================================================
+        // ====== HANDLE ENTER KEY ======
+        // ================================================================
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const activeForm = document.querySelector('.form.active');
@@ -2982,12 +3538,21 @@
             }
         });
 
+        // ================================================================
         // ====== START ======
-        checkSession();
+        // ================================================================
 
-        console.log('💬 Bubble Messenger v2.0 loaded!');
+        console.log('💬 Bubble Messenger v3.0 loaded!');
         console.log('🔑 User code is your unique identifier - share it with friends!');
-        console.log('📱 All data stored locally in your browser');
+        console.log('☁️ Using JSONBin.io for cloud sync');
+
+        if (JSONBIN_CONFIG.API_KEY === 'YOUR_JSONBIN_API_KEY_HERE') {
+            console.warn('⚠️ JSONBin not configured!');
+            console.warn('📝 Go to https://jsonbin.io, create a bin, and update the config.');
+            console.warn('📝 API_KEY and BIN_ID are required for cloud sync.');
+        }
+
+        checkSession();
     </script>
 
 </body>
